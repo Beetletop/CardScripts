@@ -60,7 +60,7 @@ function s.resetop(e,tp,eg,ep,ev,re,r,rp)
 end
 function s.atkcon(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	return c:IsSummonType(SUMMON_TYPE_LINK) and e:GetLabelObject():GetLabel()==1
+	return c:IsLinkSummoned() and e:GetLabelObject():GetLabel()==1
 end
 function s.atkfilter(c,e)
 	return c:IsType(TYPE_LINK) and (c:IsLocation(LOCATION_GRAVE) or (c:IsLocation(LOCATION_REMOVED) and c:IsFaceup())) and c:IsCanBeEffectTarget(e)
@@ -118,6 +118,6 @@ function s.desop(e,tp,eg,ep,ev,re,r,rp)
 	end
 	s.attr_list[tp]=s.attr_list[tp]|att
 	for _,str in aux.GetAttributeStrings(att) do
-		e:GetHandler():RegisterFlagEffect(0,RESET_EVENT|RESETS_STANDARD|RESET_PHASE|PHASE_END,EFFECT_FLAG_CLIENT_HINT,1,0,str)
+		e:GetHandler():RegisterFlagEffect(0,RESETS_STANDARD_PHASE_END,EFFECT_FLAG_CLIENT_HINT,1,0,str)
 	end
 end

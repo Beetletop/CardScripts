@@ -1,5 +1,5 @@
 --蕾禍大輪首狩舞
---Raika Dairin Kubikarimai
+--Ragnaraika Hunting Dance
 --scripted by pyrQ
 local s,id=GetID()
 function s.initial_effect(c)
@@ -25,7 +25,7 @@ function s.initial_effect(c)
 	e2:SetRange(LOCATION_GRAVE)
 	e2:SetCountLimit(1,{id,1})
 	e2:SetCondition(s.descon)
-	e2:SetCost(aux.selfbanishcost)
+	e2:SetCost(Cost.SelfBanish)
 	e2:SetTarget(s.destg)
 	e2:SetOperation(s.desop)
 	c:RegisterEffect(e2)

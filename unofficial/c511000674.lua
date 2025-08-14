@@ -29,23 +29,19 @@ function s.initial_effect(c)
 	e4:SetType(EFFECT_TYPE_IGNITION)
 	e4:SetRange(LOCATION_MZONE)
 	e4:SetCountLimit(1)
-	e4:SetCost(s.cost)
+	e4:SetCost(Cost.DetachFromSelf(1))
 	e4:SetTarget(s.target)
 	e4:SetOperation(s.operation)
-	c:RegisterEffect(e4,false,REGISTER_FLAG_DETACH_XMAT)
+	c:RegisterEffect(e4)
 end
 function s.bttg(e,c)
-	return not c:IsSummonType(SUMMON_TYPE_SPECIAL)
+	return not c:IsSpecialSummoned()
 end
 function s.atkfilter(e,c)
-	return c:IsSummonType(SUMMON_TYPE_SPECIAL)
-end
-function s.cost(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return e:GetHandler():CheckRemoveOverlayCard(tp,1,REASON_COST) end
-	e:GetHandler():RemoveOverlayCard(tp,1,1,REASON_COST)
+	return c:IsSpecialSummoned()
 end
 function s.filter(c)
-	return c:IsSummonType(SUMMON_TYPE_SPECIAL) and c:IsFaceup() and c:GetAttack()>0
+	return c:IsSpecialSummoned() and c:IsFaceup() and c:GetAttack()>0
 end
 function s.target(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.IsExistingMatchingCard(s.filter,tp,0,LOCATION_MZONE,1,nil) end

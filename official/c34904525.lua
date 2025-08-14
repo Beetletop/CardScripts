@@ -1,4 +1,4 @@
---JP Name
+--雷風魔神－ゲート・ガーディアン
 --Gate Guardian of Thunder and Wind
 --Scripted by The Razgriz
 local s,id=GetID()
@@ -34,7 +34,7 @@ function s.contactfil(tp)
 	return Duel.GetMatchingGroup(Card.IsAbleToRemoveAsCost,tp,LOCATION_ONFIELD,0,nil)
 end
 function s.contactop(g)
-	Duel.Remove(g,POS_FACEUP,REASON_COST+REASON_MATERIAL)
+	Duel.Remove(g,POS_FACEUP,REASON_COST|REASON_MATERIAL)
 end
 function s.thfilter(c)
 	return c:IsSpellTrap() and c:IsAbleToHand() and c:ListsCode(CARD_SANGA_OF_THE_THUNDER) and c:ListsCode(CARD_KAZEJIN) and c:ListsCode(CARD_SUIJIN)
@@ -53,7 +53,7 @@ function s.thop(e,tp,eg,ep,ev,re,r,rp)
 end
 function s.spcon(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	return c:IsPreviousPosition(POS_FACEUP) and c:IsSummonType(SUMMON_TYPE_SPECIAL) and c:IsPreviousLocation(LOCATION_MZONE)
+	return c:IsPreviousPosition(POS_FACEUP) and c:IsSpecialSummoned() and c:IsPreviousLocation(LOCATION_MZONE)
 		and c:IsPreviousControler(tp) and rp==1-tp
 end
 function s.spfilter(c,e,tp)

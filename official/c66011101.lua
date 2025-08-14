@@ -12,10 +12,10 @@ function s.initial_effect(c)
 	e1:SetType(EFFECT_TYPE_IGNITION)
 	e1:SetRange(LOCATION_MZONE)
 	e1:SetCountLimit(1,id)
-	e1:SetCost(aux.dxmcostgen(2,2,nil))
+	e1:SetCost(Cost.DetachFromSelf(2,2,nil))
 	e1:SetTarget(s.efftg)
 	e1:SetOperation(s.effop)
-	c:RegisterEffect(e1,false,REGISTER_FLAG_DETACH_XMAT)
+	c:RegisterEffect(e1)
 end
 s.xyz_number=60
 function s.spfilter(c,e,tp)
@@ -105,7 +105,7 @@ function s.effop(e,tp,eg,ep,ev,re,r,rp)
 			e2:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
 			e2:SetCode(EFFECT_SET_ATTACK_FINAL)
 			e2:SetValue(tc:GetAttack()*2)
-			e2:SetReset(RESET_EVENT|RESETS_STANDARD|RESET_PHASE|PHASE_END)
+			e2:SetReset(RESETS_STANDARD_PHASE_END)
 			tc:RegisterEffect(e2)
 		end
 	end

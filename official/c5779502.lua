@@ -1,5 +1,5 @@
+--形勢反転
 --Underdog
---Scripted by The Razgriz
 local s,id=GetID()
 function s.initial_effect(c)
 	--Activate

@@ -1,4 +1,4 @@
---
+--神蝕む光 ティスティナ
 --Tistina, the Divinity that Defies Darkness
 --Scripted by Hatter
 local s,id=GetID()
@@ -25,9 +25,9 @@ function s.initial_effect(c)
 	e2:SetRange(LOCATION_MZONE)
 	e2:SetCountLimit(1)
 	e2:SetCondition(function(e) return e:GetHandler():GetOverlayGroup():IsExists(Card.IsCode,1,nil,CARD_CRYSTAL_GOD_TISTINA) end)
-	e2:SetCost(aux.dxmcostgen(1,1,nil))
+	e2:SetCost(Cost.DetachFromSelf(1,1,nil))
 	e2:SetOperation(s.atkop)
-	c:RegisterEffect(e2,false,REGISTER_FLAG_DETACH_XMAT)
+	c:RegisterEffect(e2)
 	--Special Summon 1 "Tistina" monster from the GY
 	local e3=Effect.CreateEffect(c)
 	e3:SetDescription(aux.Stringid(id,2))
@@ -69,7 +69,7 @@ function s.atkop(e,tp,eg,ep,ev,re,r,rp)
 		e1:SetType(EFFECT_TYPE_SINGLE)
 		e1:SetCode(EFFECT_UPDATE_ATTACK)
 		e1:SetValue(2000)
-		e1:SetReset(RESET_EVENT|RESETS_STANDARD|RESET_PHASE|PHASE_END,2)
+		e1:SetReset(RESETS_STANDARD_PHASE_END,2)
 		c:RegisterEffect(e1)
 	end
 end

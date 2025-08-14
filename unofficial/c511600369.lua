@@ -13,10 +13,10 @@ function s.initial_effect(c)
 	e1:SetCountLimit(1)
 	e1:SetRange(LOCATION_MZONE)
 	e1:SetCondition(s.atcon)
-	e1:SetCost(s.atcost)
+	e1:SetCost(Cost.DetachFromSelf(1))
 	e1:SetTarget(s.attg)
 	e1:SetOperation(s.atop)
-	c:RegisterEffect(e1,false,REGISTER_FLAG_DETACH_XMAT)
+	c:RegisterEffect(e1)
 	--change target
 	local e2=Effect.CreateEffect(c)
 	e2:SetDescription(aux.Stringid(id,1))
@@ -31,12 +31,8 @@ s.listed_series={0x54}
 function s.atcon(e,tp,eg,ep,ev,re,r,rp)
 	return Duel.IsAbleToEnterBP()
 end
-function s.atcost(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return e:GetHandler():CheckRemoveOverlayCard(tp,1,REASON_COST) end
-	e:GetHandler():RemoveOverlayCard(tp,1,1,REASON_COST)
-end
 function s.filter(c)
-	return c:IsFaceup() and c:IsSetCard(0x54) and c:GetEffectCount(EFFECT_EXTRA_ATTACK)==0
+	return c:IsFaceup() and c:IsSetCard(SET_GAGAGA) and c:GetEffectCount(EFFECT_EXTRA_ATTACK)==0
 end
 function s.attg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.IsExistingMatchingCard(s.filter,tp,LOCATION_MZONE,0,1,nil) end
@@ -57,7 +53,7 @@ end
 function s.cbcon(e,tp,eg,ep,ev,re,r,rp)
 	local bt=eg:GetFirst()
 	return r~=REASON_REPLACE and bt~=e:GetHandler() and bt:IsControler(tp)
-		and bt:IsFaceup() and bt:IsSetCard(0x54) and e:GetHandler():IsPosition(POS_ATTACK)
+		and bt:IsFaceup() and bt:IsSetCard(SET_GAGAGA) and e:GetHandler():IsPosition(POS_ATTACK)
 end
 function s.cbop(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()

@@ -1,3 +1,4 @@
+--ＴＧＸ３００
 --TGX300
 local s,id=GetID()
 function s.initial_effect(c)
@@ -6,7 +7,7 @@ function s.initial_effect(c)
 	e1:SetType(EFFECT_TYPE_ACTIVATE)
 	e1:SetCode(EVENT_FREE_CHAIN)
 	c:RegisterEffect(e1)
-	--atk up
+	--Face-up monsters you control gain 300 ATK for each "T.G." monster you control
 	local e2=Effect.CreateEffect(c)
 	e2:SetType(EFFECT_TYPE_FIELD)
 	e2:SetCode(EFFECT_UPDATE_ATTACK)
@@ -15,9 +16,9 @@ function s.initial_effect(c)
 	e2:SetValue(s.val)
 	c:RegisterEffect(e2)
 end
-s.listed_series={0x27}
+s.listed_series={SET_TG}
 function s.filter(c)
-	return c:IsFaceup() and c:IsSetCard(0x27)
+	return c:IsFaceup() and c:IsSetCard(SET_TG)
 end
 function s.val(e,c)
 	return Duel.GetMatchingGroupCount(s.filter,c:GetControler(),LOCATION_MZONE,0,nil)*300

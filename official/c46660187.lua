@@ -1,9 +1,10 @@
+--ウォークライ・ビッグブロウ
 --War Rock Big Blow
---Scripted by fiftyfour
 local s,id=GetID()
 function s.initial_effect(c)
-	--Activate
+	--Destroy up to 2 cards your opponent controls
 	local e1=Effect.CreateEffect(c)
+	e1:SetDescription(aux.Stringid(id,0))
 	e1:SetCategory(CATEGORY_DESTROY)
 	e1:SetType(EFFECT_TYPE_ACTIVATE)
 	e1:SetCode(EVENT_LEAVE_FIELD)
@@ -15,7 +16,7 @@ function s.initial_effect(c)
 	c:RegisterEffect(e1)
 end
 function s.cfilter(c,tp)
-	return c:IsPreviousSetCard(0x161) and c:GetReasonPlayer()==1-tp
+	return c:IsPreviousSetCard(SET_WAR_ROCK) and c:GetReasonPlayer()==1-tp
 		and c:IsReason(REASON_EFFECT) and c:IsPreviousControler(tp)
 		and c:IsPreviousLocation(LOCATION_MZONE) and c:IsPreviousPosition(POS_FACEUP)
 end

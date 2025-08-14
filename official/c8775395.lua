@@ -1,5 +1,5 @@
 --災誕の呪眼
---Evil Eye Unleashed
+--Evil Eyes Unleashed
 --scripted by Naim
 local s,id=GetID()
 function s.initial_effect(c)
@@ -24,7 +24,7 @@ function s.initial_effect(c)
 	e2:SetRange(LOCATION_GRAVE)
 	e2:SetCountLimit(1,{id,1})
 	e2:SetCondition(s.eqpcond)
-	e2:SetCost(aux.bfgcost)
+	e2:SetCost(Cost.SelfBanish)
 	e2:SetTarget(s.eqptg)
 	e2:SetOperation(s.eqpop)
 	c:RegisterEffect(e2)
@@ -75,7 +75,7 @@ function s.damop(e,tp,eg,ep,ev,re,r,rp)
 	end
 end
 function s.lnkfilter(c,tp)
-	return c:IsSummonType(SUMMON_TYPE_LINK) and c:IsSetCard(SET_EVIL_EYE) and c:IsSummonPlayer(tp)
+	return c:IsLinkSummoned() and c:IsSetCard(SET_EVIL_EYE) and c:IsSummonPlayer(tp)
 end
 function s.eqpcond(e,tp,eg,ep,ev,re,r,rp)
 	return eg:IsExists(s.lnkfilter,1,nil,tp)

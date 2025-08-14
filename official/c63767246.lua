@@ -24,9 +24,9 @@ function s.initial_effect(c)
 	e2:SetCode(EVENT_ATTACK_ANNOUNCE)
 	e2:SetRange(LOCATION_MZONE)
 	e2:SetCondition(function(e,tp) return Duel.GetAttacker():IsControler(1-tp) and Duel.GetAttackTarget()~=e:GetHandler() end)
-	e2:SetCost(aux.dxmcostgen(1,1,nil))
+	e2:SetCost(Cost.DetachFromSelf(1,1,nil))
 	e2:SetOperation(s.chngtgop)
-	c:RegisterEffect(e2,false,REGISTER_FLAG_DETACH_XMAT)
+	c:RegisterEffect(e2)
 	--Make 1 of your Xyz monsters gain ATK
 	local e3=Effect.CreateEffect(c)
 	e3:SetDescription(aux.Stringid(id,2))
@@ -52,7 +52,7 @@ end
 function s.disop(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	local rc=re:GetHandler()
-	if Duel.NegateEffect(ev) and c:IsRelateToEffect(e) and rc:IsRelateToEffect(re) and c:IsType(TYPE_XYZ) then
+	if Duel.NegateEffect(ev) and c:IsRelateToEffect(e) and rc:IsRelateToEffect(re) and c:IsType(TYPE_XYZ) and rc:IsCanBeXyzMaterial(c,tp,REASON_EFFECT) then
 		rc:CancelToGrave()
 		Duel.Overlay(c,rc,true)
 	end

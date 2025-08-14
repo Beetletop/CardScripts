@@ -1,5 +1,5 @@
 --粛声なる竜神サフィラ
---Saffira, the Silenforcing Deity of Dragons
+--Saffira, Divine Dragon of the Voiceless Voice
 --scripted by Naim
 local s,id=GetID()
 function s.initial_effect(c)
@@ -12,7 +12,7 @@ function s.initial_effect(c)
 	e1:SetProperty(EFFECT_FLAG_PLAYER_TARGET+EFFECT_FLAG_DELAY)
 	e1:SetCode(EVENT_SPSUMMON_SUCCESS)
 	e1:SetCountLimit(1,id)
-	e1:SetCondition(function(e) return e:GetHandler():IsSummonType(SUMMON_TYPE_RITUAL) end)
+	e1:SetCondition(function(e) return e:GetHandler():IsRitualSummoned() end)
 	e1:SetTarget(s.drwtg)
 	e1:SetOperation(s.drwop)
 	c:RegisterEffect(e1)

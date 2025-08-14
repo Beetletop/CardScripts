@@ -147,10 +147,8 @@ function Fusion.SummonEffFilter(c,fusfilter,e,tp,mg,gc,chkf,value,sumlimit,nosum
 	--Attempt to fix the interaction between an EFFECT_EXTRA_FUSION_MATERIAL effect
 	--and Fusion Summoning effects that normally allow you to only use a single location
 	--(e.g. with "Flash Fusion" you can normally only use monsters on your field).
-	if efmg and #efmg>0 then
-		if #(efmg:Match(GetExtraMatEff,nil,c))>0 then
-			mg:Merge(efmg)
-		end
+	if efmg then
+		mg:Merge(efmg:Filter(GetExtraMatEff,nil,c))
 	end
 	return c:IsType(TYPE_FUSION) and (not fusfilter or fusfilter(c,tp)) and (nosummoncheck or c:IsCanBeSpecialSummoned(e,value,tp,sumlimit,false,sumpos))
 			and c:CheckFusionMaterial(mg,gc,chkf)
@@ -332,6 +330,9 @@ function (fusfilter,matfilter,extrafil,extraop,gc2,stage2,exactcount,value,locat
 				local efmg=fmg_all:Filter(GetExtraMatEff,nil)
 				local extragroup=nil
 				local repl_flag=false
+				local function filter_material_immunity_and_necrovalley(card,fvalue,feffect)
+					return card:IsCanBeFusionMaterial(nil,fvalue) and not card:IsImmuneToEffect(feffect) and aux.nvfilter(card)
+				end
 				if #efmg>0 then
 					local extra_feff=GetExtraMatEff(efmg:GetFirst())
 					if extra_feff and extra_feff:GetLabelObject() then
@@ -346,7 +347,7 @@ function (fusfilter,matfilter,extrafil,extraop,gc2,stage2,exactcount,value,locat
 									ret[1]:Match(repl_function[2],nil,e,tp)
 									efmg:Match(repl_function[2],nil,e,tp)
 								end
-								Fusion.ExtraGroup=ret[1]:Filter(Card.IsCanBeFusionMaterial,nil,nil,value):Match(aux.NOT(Card.IsImmuneToEffect),nil,e)
+								Fusion.ExtraGroup=ret[1]:Filter(filter_material_immunity_and_necrovalley,nil,value,e)
 								mg1:Merge(ret[1])
 							end
 							checkAddition=ret[2]
@@ -357,7 +358,7 @@ function (fusfilter,matfilter,extrafil,extraop,gc2,stage2,exactcount,value,locat
 							if ret[1] then
 								repl[1]:Match(matfilter,nil,e,tp,1)
 								ret[1]:Merge(repl[1])
-								Fusion.ExtraGroup=ret[1]:Filter(Card.IsCanBeFusionMaterial,nil,nil,value):Match(aux.NOT(Card.IsImmuneToEffect),nil,e)
+								Fusion.ExtraGroup=ret[1]:Filter(filter_material_immunity_and_necrovalley,nil,value,e)
 								mg1:Merge(ret[1])
 							end
 							if ret[2] then
@@ -372,13 +373,13 @@ function (fusfilter,matfilter,extrafil,extraop,gc2,stage2,exactcount,value,locat
 				if not repl_flag and extrafil then
 					local ret = {extrafil(e,tp,mg1)}
 					if ret[1] then
-						Fusion.ExtraGroup=ret[1]:Filter(Card.IsCanBeFusionMaterial,nil,nil,value):Match(aux.NOT(Card.IsImmuneToEffect),nil,e)
+						Fusion.ExtraGroup=ret[1]:Filter(filter_material_immunity_and_necrovalley,nil,value,e)
 						extragroup=ret[1]
 						mg1:Merge(ret[1])
 					end
 					checkAddition=ret[2]
 				end
-				mg1:Match(Card.IsCanBeFusionMaterial,nil,nil,value):Match(aux.NOT(Card.IsImmuneToEffect),nil,e)
+				mg1:Match(filter_material_immunity_and_necrovalley,nil,value,e)
 				if gc and (not mg1:Includes(gc) or gc:IsExists(Fusion.ForcedMatValidity,1,nil,e)) then
 					Fusion.ExtraGroup=nil
 					return false
@@ -515,7 +516,7 @@ function (fusfilter,matfilter,extrafil,extraop,gc2,stage2,exactcount,value,locat
 							local extra_feff_mg,normal_mg=mat1:Split(GetExtraMatEff,nil,tc)
 							local extra_feff
 							if #extra_feff_mg>0 then extra_feff=GetExtraMatEff(extra_feff_mg:GetFirst(),tc) end
-							if #normal_mg>0 then
+							if #normal_mg>0 and (not extra_feff or extra_feff:GetLabel()~=160018042) then
 								normal_mg=normal_mg:AddMaximumCheck()
 								Duel.SendtoGrave(normal_mg,REASON_EFFECT+REASON_MATERIAL+REASON_FUSION)
 							end
@@ -566,7 +567,8 @@ function Fusion.ShuffleMaterial(e,tc,tp,sg)
 	local hg=sg:Filter(Card.IsLocation,nil,LOCATION_GRAVE|LOCATION_REMOVED)
 	if #rg>0 then Duel.ConfirmCards(1-tp,rg) end
 	if #hg>0 then Duel.HintSelection(hg,true) end
-	Duel.SendtoDeck(sg,nil,2,REASON_EFFECT|REASON_MATERIAL|REASON_FUSION)
+	local tg=sg:AddMaximumCheck()
+	Duel.SendtoDeck(tg,nil,2,REASON_EFFECT|REASON_MATERIAL|REASON_FUSION)
 	sg:Clear()
 end
 function Fusion.OnFieldMat(filter,...)

@@ -47,7 +47,7 @@ function s.initial_effect(c)
 end
 s.counter_place_list={COUNTER_VACCINE}
 s.viruses={86361354,33184167,24725825,22804644,48736598,84121193,4931121,35027493,39163598,
-54591086,54974237,57728570,84491298,85555787,100000166,511002576,511005713,511009657,511001119}
+54591086,54974237,57728570,84491298,85555787,100000166,800000012,511002576,511005713,511009657,511001119}
 function Card.IsVirus(c)
 	local code=c:GetCode()
 	for _,virus_card in ipairs(s.viruses) do
@@ -74,8 +74,8 @@ function s.equipop(e,tp,eg,ep,ev,re,r,rp)
 end
 function s.reeqcond(e,tp,eg,ep,ev,re,r,rp)
 	local tc=eg:GetFirst()
-	return (tc:IsSummonType(SUMMON_TYPE_TRIBUTE) or tc:IsSummonType(SUMMON_TYPE_FUSION))
-		and tc:GetMaterial():IsContains(e:GetHandler():GetPreviousEquipTarget())
+	local ec=e:GetHandler():GetPreviousEquipTarget()
+	return (tc:IsTributeSummoned() or tc:IsFusionSummoned()) and ec and tc:GetMaterial():IsContains(ec)
 end
 function s.cfilter(c,e,oldec)
 	return c:IsFaceup() and c:IsCanBeEffectTarget(e) and c:GetMaterial():IsContains(oldec)

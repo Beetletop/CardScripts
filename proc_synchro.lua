@@ -51,6 +51,7 @@ function Synchro.AddProcedure(c,...)
 	e1:SetOperation(Synchro.Operation)
 	e1:SetValue(SUMMON_TYPE_SYNCHRO)
 	c:RegisterEffect(e1)
+	return e1
 end
 function Synchro.CheckFilterChk(c,f1,f2,sub1,sub2,sc,tp)
 	local te=c:GetCardEffect(EFFECT_SYNCHRO_CHECK)
@@ -82,9 +83,9 @@ function Synchro.Condition(f1,min1,max1,f2,min2,max2,sub1,sub2,req1,req2,reqm)
 				local g
 				local mgchk
 				if sub1 then
-					sub1=aux.OR(sub1,function(_c) return _c:IsHasEffect(30765615) and (not f1 or f1(_c,c,SUMMON_TYPE_SYNCHRO|MATERIAL_SYNCHRO,tp)) end)
+					sub1=aux.OR(sub1,function(_c) return _c:IsHasEffect(EFFECT_CAN_BE_TUNER) and (not f1 or f1(_c,c,SUMMON_TYPE_SYNCHRO|MATERIAL_SYNCHRO,tp)) end)
 				else
-					sub1=function(_c) return _c:IsHasEffect(30765615) and (not f1 or f1(_c,c,SUMMON_TYPE_SYNCHRO|MATERIAL_SYNCHRO,tp)) end
+					sub1=function(_c) return _c:IsHasEffect(EFFECT_CAN_BE_TUNER) and (not f1 or f1(_c,c,SUMMON_TYPE_SYNCHRO|MATERIAL_SYNCHRO,tp)) end
 				end
 				if mg then
 					dg=mg
@@ -103,6 +104,7 @@ function Synchro.Condition(f1,min1,max1,f2,min2,max2,sub1,sub2,req1,req2,reqm)
 					g=dg:Filter(Card.IsCanBeSynchroMaterial,nil,c)
 					mgchk=false
 				end
+				g:Remove(function(c,sc)return c:GetSynchroLevel(sc) < 1 end,nil,c)
 				local pg=Auxiliary.GetMustBeMaterialGroup(tp,dg,tp,c,g,REASON_SYNCHRO)
 				if not g:Includes(pg) or pg:IsExists(aux.NOT(Card.IsCanBeSynchroMaterial),1,nil,c) then return false end
 				if smat then
@@ -463,9 +465,9 @@ function Synchro.Target(f1,min1,max1,f2,min2,max2,sub1,sub2,req1,req2,reqm)
 				local g
 				local dg
 				if sub1 then
-					sub1=aux.OR(sub1,function(_c) return _c:IsHasEffect(30765615) and (not f1 or f1(_c,c,SUMMON_TYPE_SYNCHRO|MATERIAL_SYNCHRO,tp)) end)
+					sub1=aux.OR(sub1,function(_c) return _c:IsHasEffect(EFFECT_CAN_BE_TUNER) and (not f1 or f1(_c,c,SUMMON_TYPE_SYNCHRO|MATERIAL_SYNCHRO,tp)) end)
 				else
-					sub1=function(_c) return _c:IsHasEffect(30765615) and (not f1 or f1(_c,c,SUMMON_TYPE_SYNCHRO|MATERIAL_SYNCHRO,tp)) end
+					sub1=function(_c) return _c:IsHasEffect(EFFECT_CAN_BE_TUNER) and (not f1 or f1(_c,c,SUMMON_TYPE_SYNCHRO|MATERIAL_SYNCHRO,tp)) end
 				end
 				if mg then
 					mgchk=true
@@ -484,6 +486,7 @@ function Synchro.Target(f1,min1,max1,f2,min2,max2,sub1,sub2,req1,req2,reqm)
 					dg=Duel.GetMatchingGroup(synchmatfilter,tp,LOCATION_MZONE|LOCATION_HAND,LOCATION_MZONE,c)
 					g=dg:Filter(Card.IsCanBeSynchroMaterial,nil,c)
 				end
+				g:Remove(function(c,sc)return c:GetSynchroLevel(sc) < 1 end,nil,c)
 				local pg=Auxiliary.GetMustBeMaterialGroup(tp,dg,tp,c,g,REASON_SYNCHRO)
 				if smat then
 					pg:Merge(smat)
@@ -770,6 +773,7 @@ function Synchro.AddMajesticProcedure(c,f1,cbt1,f2,cbt2,f3,cbt3,...)
 	e1:SetOperation(Synchro.Operation)
 	e1:SetValue(SUMMON_TYPE_SYNCHRO)
 	c:RegisterEffect(e1)
+	return e1
 end
 function Synchro.MajesticCheck1(c,g,sg,card1,card2,card3,lv,sc,tp,pg,f1,cbt1,f2,cbt2,f3,cbt3,...)
 	local res
@@ -887,6 +891,7 @@ function Synchro.MajesticCondition(f1,cbt1,f2,cbt2,f3,cbt3,...)
 					dg=Duel.GetMatchingGroup(function(mc) return mc:IsFaceup() and (mc:IsControler(tp) or mc:IsCanBeSynchroMaterial(c)) end,tp,LOCATION_MZONE,LOCATION_MZONE,c)
 					g=dg:Filter(Card.IsCanBeSynchroMaterial,nil,c)
 				end
+				g:Remove(function(c,sc)return c:GetSynchroLevel(sc) < 1 end,nil,c)
 				local pg=Auxiliary.GetMustBeMaterialGroup(tp,dg,tp,c,g,REASON_SYNCHRO)
 				if not g:Includes(pg) or pg:IsExists(aux.NOT(Card.IsCanBeSynchroMaterial),1,nil,c) then return false end
 				if smat then
@@ -932,6 +937,7 @@ function Synchro.MajesticTarget(f1,cbt1,f2,cbt2,f3,cbt3,...)
 					dg=Duel.GetMatchingGroup(function(mc) return mc:IsFaceup() and (mc:IsControler(tp) or mc:IsCanBeSynchroMaterial(c)) end,tp,LOCATION_MZONE,LOCATION_MZONE,c)
 					g=dg:Filter(Card.IsCanBeSynchroMaterial,nil,c)
 				end
+				g:Remove(function(c,sc)return c:GetSynchroLevel(sc) < 1 end,nil,c)
 				local pg=Auxiliary.GetMustBeMaterialGroup(tp,dg,tp,c,g,REASON_SYNCHRO)
 				if smat then
 					pg:Merge(smat)
@@ -1025,6 +1031,7 @@ function Synchro.AddDarkSynchroProcedure(c,f1,f2,plv,nlv,...)
 	e1:SetOperation(Synchro.Operation)
 	e1:SetValue(SUMMON_TYPE_SYNCHRO)
 	c:RegisterEffect(e1)
+	return e1
 end
 function Synchro.DarkCheck1(c,g,sg,card1,card2,plv,nlv,sc,tp,pg,f1,f2,...)
 	local res
@@ -1287,4 +1294,59 @@ function Synchro.DarkTarget(f1,f2,plv,nlv,...)
 					return true
 				else return false end
 			end
+end
+
+function Synchro.CreateHandMaterialEffect(c,id,material_filter,synchro_filter,banish_mats,rc)
+	local function matfilter1(c)
+		local effs={c:GetCardEffect(EFFECT_HAND_SYNCHRO+EFFECT_SYNCHRO_CHECK)}
+		for _,te in ipairs(effs) do
+			if te:GetLabel()~=id then return false end
+		end
+		return #effs>0
+	end
+
+	local function matfilter2(c)
+		if c:IsHasEffect(EFFECT_HAND_SYNCHRO+EFFECT_SYNCHRO_CHECK) then return false end
+		for _,te in ipairs({c:GetCardEffect(EFFECT_HAND_SYNCHRO)}) do
+			if te:GetLabel()==id then return true end
+		end
+		return false
+	end
+
+	local function synchktg(e,c,sg,tg,ntg,tsg,ntsg)
+		if not c then return true end
+		if sg:IsExists(matfilter1,1,c) then return false end
+		if not (tg:IsExists(matfilter2,1,c) or ntg:IsExists(matfilter2,1,c) or sg:IsExists(matfilter2,1,c)) then return false end
+		local trg=tg:Filter(matfilter1,nil)
+		local ntrg=ntg:Filter(matfilter1,nil)
+		return true,trg,ntrg
+	end
+
+	local function synval(e,c,sc)
+		if not c:IsLocation(LOCATION_HAND)
+			or (material_filter and not material_filter(c))
+			or (synchro_filter and not synchro_filter(sc)) then return false end
+		local e1=Effect.CreateEffect(e:GetHandler())
+		e1:SetType(EFFECT_TYPE_SINGLE)
+		e1:SetCode(EFFECT_HAND_SYNCHRO+EFFECT_SYNCHRO_CHECK)
+		e1:SetLabel(id)
+		e1:SetTarget(synchktg)
+		c:RegisterEffect(e1)
+		if banish_mats then c:RegisterFlagEffect(id,RESET_EVENT|RESETS_STANDARD,0,1) end
+		return true
+	end
+
+	local e1=Effect.CreateEffect(rc or c)
+	e1:SetType(EFFECT_TYPE_SINGLE)
+	e1:SetCode(EFFECT_HAND_SYNCHRO)
+	e1:SetProperty(EFFECT_FLAG_CANNOT_DISABLE+EFFECT_FLAG_UNCOPYABLE)
+	e1:SetLabel(id)
+	e1:SetValue(synval)
+	return e1
+end
+
+function Synchro.AddHandMaterialEffect(c,...)
+	local e1=Synchro.CreateHandMaterialEffect(c,...)
+	c:RegisterEffect(e1)
+	return e1
 end

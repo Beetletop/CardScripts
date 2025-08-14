@@ -21,7 +21,7 @@ function s.initial_effect(c)
 	e2:SetRange(LOCATION_MZONE)
 	e2:SetCountLimit(1)
 	e2:SetCondition(s.dacon)
-	e2:SetCost(s.dacost)
+	e2:SetCost(Cost.DetachFromSelf(1))
 	e2:SetTarget(s.datg)
 	e2:SetOperation(s.daop)
 	c:RegisterEffect(e2)
@@ -30,29 +30,25 @@ function s.initial_effect(c)
 	e2:SetType(EFFECT_TYPE_SINGLE)
 	e2:SetCode(EFFECT_INDESTRUCTABLE_BATTLE)
 	e2:SetValue(s.indes)
-	c:RegisterEffect(e2,false,REGISTER_FLAG_DETACH_XMAT)
+	c:RegisterEffect(e2)
 end
 s.xyz_number=47
 function s.matfilter(c)
 	return (c:IsLocation(LOCATION_HAND) or c:IsFaceup()) and not c:IsType(TYPE_TOKEN) and c:GetLevel()==3 and c:IsAttribute(ATTRIBUTE_WATER)
 end
 function s.mattg(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return Duel.IsExistingMatchingCard(s.matfilter,tp,LOCATION_HAND+LOCATION_MZONE,0,1,nil) end
+	if chk==0 then return Duel.IsExistingMatchingCard(s.matfilter,tp,LOCATION_HAND|LOCATION_MZONE,0,1,nil) end
 end
 function s.matop(e,tp,eg,ep,ev,re,r,rp)
 	if not e:GetHandler():IsRelateToEffect(e) then return end
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_XMATERIAL)
-	local g=Duel.SelectMatchingCard(tp,s.matfilter,tp,LOCATION_HAND+LOCATION_MZONE,0,1,1,nil)
+	local g=Duel.SelectMatchingCard(tp,s.matfilter,tp,LOCATION_HAND|LOCATION_MZONE,0,1,1,nil)
 	if #g>=0 then
 		Duel.Overlay(e:GetHandler(),g)
 	end
 end
 function s.dacon(e,tp,eg,ep,ev,re,r,rp)
 	return Duel.IsAbleToEnterBP()
-end
-function s.dacost(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return e:GetHandler():CheckRemoveOverlayCard(tp,1,REASON_COST) end
-	e:GetHandler():RemoveOverlayCard(tp,1,1,REASON_COST)
 end
 function s.filter(c)
 	return c:IsFaceup() and c:IsAttribute(ATTRIBUTE_WATER)
@@ -86,5 +82,5 @@ function s.ftarget(e,c)
 	return e:GetLabel()~=c:GetFieldID()
 end
 function s.indes(e,c)
-	return not c:IsSetCard(0x48)
+	return not c:IsSetCard(SET_NUMBER)
 end

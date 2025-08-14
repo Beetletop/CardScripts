@@ -1,9 +1,9 @@
--- ＂罪宝狩りの悪魔＂
--- "The Tainted Treasure Hunter Fiend"
--- Scripted by Satellaa
+--＂罪宝狩りの悪魔＂
+--WANTED: Seeker of Sinful Spoils
+--Scripted by Satellaa
 local s,id=GetID()
 function s.initial_effect(c)
-	-- Add 1 "Diabellestarr" monster from your Deck or GY to your hand
+	--Add 1 "Diabellestarr" monster from your Deck or GY to your hand
 	local e1=Effect.CreateEffect(c)
 	e1:SetDescription(aux.Stringid(id,0))
 	e1:SetCategory(CATEGORY_TOHAND+CATEGORY_SEARCH)
@@ -14,7 +14,7 @@ function s.initial_effect(c)
 	e1:SetTarget(s.thtg)
 	e1:SetOperation(s.thop)
 	c:RegisterEffect(e1)
-	-- Place 1 "Tainted Treasure" Spell/Trap that is banished or in your GY on the bottom of the Deck
+	--Place 1 "Tainted Treasure" Spell/Trap that is banished or in your GY on the bottom of the Deck
 	local e2=Effect.CreateEffect(c)
 	e2:SetDescription(aux.Stringid(id,1))
 	e2:SetCategory(CATEGORY_TODECK+CATEGORY_DRAW)
@@ -22,7 +22,7 @@ function s.initial_effect(c)
 	e2:SetProperty(EFFECT_FLAG_CARD_TARGET)
 	e2:SetRange(LOCATION_GRAVE)
 	e2:SetCountLimit(1,{id,1})
-	e2:SetCost(aux.bfgcost)
+	e2:SetCost(Cost.SelfBanish)
 	e2:SetTarget(s.tdtg)
 	e2:SetOperation(s.tdop)
 	c:RegisterEffect(e2)

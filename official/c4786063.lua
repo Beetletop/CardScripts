@@ -22,7 +22,7 @@ function s.initial_effect(c)
 	e2:SetRange(LOCATION_HAND)
 	e2:SetHintTiming(TIMING_DAMAGE_STEP)
 	e2:SetCondition(function() return not (Duel.IsPhase(PHASE_DAMAGE) and Duel.IsDamageCalculated()) end)
-	e2:SetCost(s.defcost)
+	e2:SetCost(Cost.SelfDiscard)
 	e2:SetTarget(s.deftg)
 	e2:SetOperation(s.defop)
 	c:RegisterEffect(e2)
@@ -62,11 +62,6 @@ function s.eqop(e,tp,eg,ep,ev,re,r,rp)
 		Duel.SendtoGrave(c,REASON_RULE)
 	end
 end
-function s.defcost(e,tp,eg,ep,ev,re,r,rp,chk)
-	local c=e:GetHandler()
-	if chk==0 then return c:IsDiscardable() end
-	Duel.SendtoGrave(c,REASON_COST|REASON_DISCARD)
-end
 function s.deffilter(c)
 	return c:IsPosition(POS_FACEUP_DEFENSE) and c:IsSetCard(SET_SUPERHEAVY_SAMURAI)
 end
@@ -84,7 +79,7 @@ function s.defop(e,tp,eg,ep,ev,re,r,rp)
 		e1:SetType(EFFECT_TYPE_SINGLE)
 		e1:SetCode(EFFECT_UPDATE_DEFENSE)
 		e1:SetValue(-800)
-		e1:SetReset(RESET_EVENT|RESETS_STANDARD|RESET_PHASE|PHASE_END)
+		e1:SetReset(RESETS_STANDARD_PHASE_END)
 		tc:RegisterEffect(e1)
 		--Cannot be destroyed by battle or card effects
 		local e2=e1:Clone()

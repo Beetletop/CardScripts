@@ -1,5 +1,5 @@
 --クイーンマドルチェ・ティアラフレース
---Madolche Queen Tiara-a-la-Fraise
+--Madolche Queen Tiarafraise
 --scripted by Naim
 local s,id=GetID()
 function s.initial_effect(c)
@@ -17,7 +17,7 @@ function s.initial_effect(c)
 	e1:SetHintTiming(0,TIMINGS_CHECK_MONSTER_E|TIMING_MAIN_END)
 	e1:SetCountLimit(1)
 	e1:SetCondition(function(e,tp) return Duel.IsTurnPlayer(1-tp) end)
-	e1:SetCost(aux.dxmcostgen(1,1,nil))
+	e1:SetCost(Cost.DetachFromSelf(1,1,nil))
 	e1:SetTarget(s.tdtg)
 	e1:SetOperation(s.tdop)
 	c:RegisterEffect(e1)

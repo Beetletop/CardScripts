@@ -1,5 +1,5 @@
 --征覇竜－ブレイズ
---Blaze, Supreme Ruler of Dragons
+--Blaze, Supreme Ruler of all Dragons
 --scripted by pyrQ
 local s,id=GetID()
 function s.initial_effect(c)
@@ -13,10 +13,10 @@ function s.initial_effect(c)
 	e1:SetType(EFFECT_TYPE_IGNITION)
 	e1:SetRange(LOCATION_MZONE)
 	e1:SetCountLimit(1)
-	e1:SetCost(aux.dxmcostgen(1,1,nil))
+	e1:SetCost(Cost.DetachFromSelf(1,1,nil))
 	e1:SetTarget(s.destg)
 	e1:SetOperation(s.desop)
-	c:RegisterEffect(e1,false,REGISTER_FLAG_DETACH_XMAT)
+	c:RegisterEffect(e1)
 	--Special Summon this card from your GY
 	local e2=Effect.CreateEffect(c)
 	e2:SetDescription(aux.Stringid(id,1))

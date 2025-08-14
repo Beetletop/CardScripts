@@ -1,7 +1,6 @@
 --ＺＷ－天馬双翼剣
 --ZW - Pegasus Twin Saber
 --Logical Nonsense
-
 --Substitute ID
 local s,id=GetID()
 function s.initial_effect(c)
@@ -39,7 +38,6 @@ function s.initial_effect(c)
 end
 	--Lists "Utopia" archetype
 s.listed_series={SET_UTOPIA}
-
 	--If opponent's LP is 2000 higher than yours
 function s.spcon(e,c)
 	if c==nil then return true end
@@ -95,7 +93,7 @@ end
 function s.negop(e,tp,eg,ep,ev,re,r,rp)
 	local rc=re:GetHandler()
 	if Duel.SelectYesNo(tp,aux.Stringid(id,2)) then
-		e:GetHandler():RegisterFlagEffect(id,RESET_EVENT|RESETS_STANDARD|RESET_PHASE|PHASE_END,0,1)
+		e:GetHandler():RegisterFlagEffect(id,RESETS_STANDARD_PHASE_END,0,1)
 		Duel.Hint(HINT_CARD,0,id)
 		Duel.NegateEffect(ev)
 	end

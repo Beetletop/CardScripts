@@ -11,11 +11,11 @@ function s.initial_effect(c)
 	e1:SetCost(s.spcost)
 	e1:SetTarget(s.sptg)
 	e1:SetOperation(s.spop)
-	c:RegisterEffect(e1,false,REGISTER_FLAG_CARDIAN)
+	c:RegisterEffect(e1)
 end
 function s.filter(c)
     local re=c:GetReasonEffect()
-    return c:IsLevel(7) and c:IsSetCard(SET_FLOWER_CARDIAN) and (not c:IsSummonType(SUMMON_TYPE_SPECIAL)
+    return c:IsLevel(7) and c:IsSetCard(SET_FLOWER_CARDIAN) and (not c:IsSpecialSummoned()
         or (not re or not re:GetHandler():IsSetCard(SET_FLOWER_CARDIAN) or not re:GetHandler():IsMonster()))
 end
 function s.spcost(e,tp,eg,ep,ev,re,r,rp,chk)

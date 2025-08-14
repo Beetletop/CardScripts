@@ -1,18 +1,20 @@
 --ヴァルモニカの異神－ジュラルメ
---Odd Deity of Valmonica - Giurarme
+--Duralume, Vaalmonican Heathen Hallow
 --Ashaki
 local s,id=GetID()
 function s.initial_effect(c)
 	c:EnableReviveLimit()
-	c:SetSPSummonOnce(id)
-	--Link Summon procedure
-	Link.AddProcedure(c,aux.FilterBoolFunctionEx(Card.IsType,TYPE_EFFECT),1,1)
+	--Link Summon procedure: 1 Effect Monster
+	Link.AddProcedure(c,aux.FilterBoolFunctionEx(Card.IsType,TYPE_EFFECT),1,1,nil,nil,s.splimit)
 	--Cannot be Link Summoned unless you have a Fairy Monster Card with 3 or more Resonance Counters in your Pendulum Zone
 	local e0=Effect.CreateEffect(c)
 	e0:SetType(EFFECT_TYPE_SINGLE)
-	e0:SetCode(EFFECT_SPSUMMON_COST)
-	e0:SetCost(s.spcost)
+	e0:SetProperty(EFFECT_FLAG_CANNOT_DISABLE+EFFECT_FLAG_UNCOPYABLE)
+	e0:SetCode(EFFECT_SPSUMMON_CONDITION)
+	e0:SetValue(s.splimit)
 	c:RegisterEffect(e0)
+	--You can only Special Summon "Duralume, Vaalmonican Heathen Hallow" once per turn
+	c:SetSPSummonOnce(id)
 	--Destroy opponent's monsters up to the number of Resonance Counters in your Pendulum Zone
 	local e1=Effect.CreateEffect(c)
 	e1:SetDescription(aux.Stringid(id,0))
@@ -20,7 +22,7 @@ function s.initial_effect(c)
 	e1:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
 	e1:SetProperty(EFFECT_FLAG_DELAY+EFFECT_FLAG_CARD_TARGET)
 	e1:SetCode(EVENT_SPSUMMON_SUCCESS)
-	e1:SetCondition(function(e) return e:GetHandler():IsSummonType(SUMMON_TYPE_LINK) end)
+	e1:SetCondition(function(e) return e:GetHandler():IsLinkSummoned() end)
 	e1:SetTarget(s.destg)
 	e1:SetOperation(s.desop)
 	c:RegisterEffect(e1)
@@ -35,15 +37,11 @@ function s.initial_effect(c)
 	e2:SetOperation(s.tripleatkop)
 	c:RegisterEffect(e2)
 end
-s.listed_series={SET_VALMONICA}
+s.listed_series={SET_VAALMONICA}
 s.counter_list={COUNTER_RESONANCE}
 s.listed_names={id}
-function s.spcfilter(c)
-	return c:IsFaceup() and c:IsOriginalRace(RACE_FAIRY) and c:GetCounter(COUNTER_RESONANCE)>=3
-end
-function s.spcost(e,c,tp,st)
-	if (st&SUMMON_TYPE_LINK)~=SUMMON_TYPE_LINK then return true end
-	return Duel.IsExistingMatchingCard(s.spcfilter,tp,LOCATION_PZONE,0,1,nil)
+function s.splimit(e,se,sp,st)
+	return (st&SUMMON_TYPE_LINK)~=SUMMON_TYPE_LINK or Duel.GetMatchingGroup(aux.FaceupFilter(Card.IsOriginalRace,RACE_FAIRY),sp,LOCATION_PZONE,0,nil):GetSum(Card.GetCounter,COUNTER_RESONANCE)>=3
 end
 function s.destg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 	if chkc then return chkc:IsControler(1-tp) and chkc:IsLocation(LOCATION_MZONE) end
@@ -84,7 +82,7 @@ function s.tripleatkop(e,tp,eg,ep,ev,re,r,rp)
 		e1:SetProperty(EFFECT_FLAG_CANNOT_DISABLE+EFFECT_FLAG_CLIENT_HINT)
 		e1:SetCode(EFFECT_EXTRA_ATTACK)
 		e1:SetValue(2)
-		e1:SetReset(RESET_EVENT|RESETS_STANDARD|RESET_PHASE|PHASE_END)
+		e1:SetReset(RESETS_STANDARD_PHASE_END)
 		c:RegisterEffect(e1)
 	end
 end

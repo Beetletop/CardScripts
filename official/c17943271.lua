@@ -1,9 +1,9 @@
--- メメント・ゴブリン
--- Mementotlan Goblin
--- Scripted by Satellaa
+--メメント・ゴブリン
+--Mementotlan Goblin
+--Scripted by Satellaa
 local s,id=GetID()
 function s.initial_effect(c)
-	-- Make your opponent cannot target "Memento" monsters
+	--Make your opponent cannot target "Memento" monsters
 	local e1=Effect.CreateEffect(c)
 	e1:SetDescription(aux.Stringid(id,0))
 	e1:SetType(EFFECT_TYPE_QUICK_O)
@@ -12,10 +12,10 @@ function s.initial_effect(c)
 	e1:SetCountLimit(1,id)
 	e1:SetHintTiming(0,TIMINGS_CHECK_MONSTER|TIMING_MAIN_END)
 	e1:SetCondition(s.untgcon)
-	e1:SetCost(s.untgcost)
+	e1:SetCost(Cost.SelfDiscard)
 	e1:SetOperation(s.untgop)
 	c:RegisterEffect(e1)
-	-- Send up to 2 "Memento" cards with different names from your Deck to the GY
+	--Send up to 2 "Memento" cards with different names from your Deck to the GY
 	local e2=Effect.CreateEffect(c)
 	e2:SetDescription(aux.Stringid(id,1))
 	e2:SetCategory(CATEGORY_DESTROY+CATEGORY_TOGRAVE)
@@ -30,11 +30,6 @@ s.listed_series={SET_MEMENTO}
 s.listed_names={CARD_MEMENTOAL_TECUHTLICA,id}
 function s.untgcon(e,tp,eg,ep,ev,re,r,rp)
 	return Duel.IsMainPhase() and Duel.IsExistingMatchingCard(aux.FaceupFilter(Card.IsCode,CARD_MEMENTOAL_TECUHTLICA),tp,LOCATION_ONFIELD,0,1,nil)
-end
-function s.untgcost(e,tp,eg,ep,ev,re,r,rp,chk)
-	local c=e:GetHandler()
-	if chk==0 then return c:IsDiscardable() end
-	Duel.SendtoGrave(c,REASON_COST|REASON_DISCARD)
 end
 function s.untgop(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()

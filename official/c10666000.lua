@@ -1,17 +1,17 @@
 --Ｎｏ．１ インフェクション・バアル・ゼブル
---Number 1: Infection Buzz King
+--Number 1: Infection Buzzking
 --scripted by pyrQ, adapted from the anime script
 local s,id=GetID()
 function s.initial_effect(c)
 	c:EnableReviveLimit()
 	--Xyz Summon procedure
-	Xyz.AddProcedure(c,nil,8,2,nil,nil,99)
+	Xyz.AddProcedure(c,nil,8,2,nil,nil,Xyz.InfiniteMats)
 	--Attach 1 card from your opponent's GY to this card
 	local e1=Effect.CreateEffect(c)
 	e1:SetDescription(aux.Stringid(id,0))
 	e1:SetCategory(CATEGORY_LEAVE_GRAVE)
 	e1:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_TRIGGER_O)
-	e1:SetCode(EVENT_PHASE+PHASE_STANDBY)
+	e1:SetCode(EVENT_PHASE|PHASE_STANDBY)
 	e1:SetRange(LOCATION_MZONE)
 	e1:SetCountLimit(1)
 	e1:SetCondition(function(_,tp) return Duel.IsTurnPlayer(tp) end)
@@ -26,7 +26,7 @@ function s.initial_effect(c)
 	e2:SetProperty(EFFECT_FLAG_DELAY)
 	e2:SetCode(EVENT_SPSUMMON_SUCCESS)
 	e2:SetCountLimit(1,id)
-	e2:SetCondition(function(e) return e:GetHandler():IsSummonType(SUMMON_TYPE_XYZ) end)
+	e2:SetCondition(function(e) return e:GetHandler():IsXyzSummoned() end)
 	e2:SetTarget(s.tgtg)
 	e2:SetOperation(s.tgop)
 	c:RegisterEffect(e2)
@@ -38,10 +38,10 @@ function s.initial_effect(c)
 	e3:SetProperty(EFFECT_FLAG_CARD_TARGET)
 	e3:SetRange(LOCATION_MZONE)
 	e3:SetCountLimit(1,{id,1})
-	e3:SetCost(aux.dxmcostgen(1,1,nil))
+	e3:SetCost(Cost.DetachFromSelf(1,1,nil))
 	e3:SetTarget(s.destg)
 	e3:SetOperation(s.desop)
-	c:RegisterEffect(e3,false,REGISTER_FLAG_DETACH_XMAT)
+	c:RegisterEffect(e3)
 end
 s.xyz_number=1
 function s.mattg(e,tp,eg,ep,ev,re,r,rp,chk)

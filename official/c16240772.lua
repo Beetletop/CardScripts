@@ -1,9 +1,9 @@
--- 死の罪宝－ルシエラ
--- Tainted Treasure of Doom - Luciela
--- Scripted by Satellaa
+--死の罪宝－ルシエラ
+--Sinful Spoils of Doom - Rciela
+--Scripted by Satellaa
 local s,id=GetID()
 function s.initial_effect(c)
-	-- Apply effects 
+	--Apply effects 
 	local e1=Effect.CreateEffect(c)
 	e1:SetDescription(aux.Stringid(id,0))
 	e1:SetCategory(CATEGORY_ATKCHANGE+CATEGORY_TOGRAVE+CATEGORY_DESTROY)
@@ -12,7 +12,7 @@ function s.initial_effect(c)
 	e1:SetCode(EVENT_FREE_CHAIN)
 	e1:SetHintTiming(TIMING_DAMAGE_STEP,TIMINGS_CHECK_MONSTER_E|TIMING_DAMAGE_STEP)
 	e1:SetCountLimit(1,id,EFFECT_COUNT_CODE_OATH)
-	e1:SetCondition(function() return Duel.GetCurrentPhase()~=PHASE_DAMAGE or not Duel.IsDamageCalculated() end)
+	e1:SetCondition(aux.StatChangeDamageStepCondition)
 	e1:SetTarget(s.target)
 	e1:SetOperation(s.activate)
 	c:RegisterEffect(e1)
@@ -33,7 +33,7 @@ function s.activate(e,tp,eg,ep,ev,re,r,rp)
 	if not (tc:IsRelateToEffect(e) and tc:IsFaceup()) then return end
 	local c=e:GetHandler()
 	if not tc:IsImmuneToEffect(e) then
-		-- Unaffected by other monsters' effects
+		--Unaffected by other monsters' effects
 		local e1=Effect.CreateEffect(c)
 		e1:SetDescription(3101)
 		e1:SetType(EFFECT_TYPE_SINGLE)
@@ -41,11 +41,11 @@ function s.activate(e,tp,eg,ep,ev,re,r,rp)
 		e1:SetCode(EFFECT_IMMUNE_EFFECT)
 		e1:SetRange(LOCATION_MZONE)
 		e1:SetValue(function(_e,te) return te:IsMonsterEffect() and te:GetOwner()~=_e:GetHandler() end)
-		e1:SetReset(RESET_EVENT|RESETS_STANDARD|RESET_PHASE|PHASE_END)
+		e1:SetReset(RESETS_STANDARD_PHASE_END)
 		tc:RegisterEffect(e1)
 		local resetcount=Duel.GetCurrentPhase()<=PHASE_STANDBY and 2 or 1
 		local prevturn=Duel.GetTurnCount()
-		-- Send it to the GY during the Standby Phase of the next turn
+		--Send it to the GY during the Standby Phase of the next turn
 		aux.DelayedOperation(tc,PHASE_STANDBY,id,e,tp,function(ag) Duel.SendtoGrave(ag,REASON_EFFECT) end,function() return Duel.GetTurnCount()~=prevturn end,nil,resetcount,aux.Stringid(id,1))
 	end
 	local tc_atk=tc:GetAttack()
@@ -56,7 +56,7 @@ function s.activate(e,tp,eg,ep,ev,re,r,rp)
 	local dg=Group.CreateGroup()
 	for oc in g:Iter() do
 		local preatk=oc:GetAttack()
-		-- Decrease ATK
+		--Decrease ATK
 		local e2=Effect.CreateEffect(c)
 		e2:SetType(EFFECT_TYPE_SINGLE)
 		e2:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)

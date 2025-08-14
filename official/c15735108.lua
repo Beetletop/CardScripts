@@ -1,5 +1,5 @@
 --マジックカード「クロス・ソウル」
---Spell Card: "Soul Exchange"
+--Spell Card "Soul Exchange"
 --scripted by Naim
 local s,id=GetID()
 function s.initial_effect(c)
@@ -63,7 +63,7 @@ function s.activate(e,tp,eg,ep,ev,re,r,rp)
 		e2:SetProperty(EFFECT_FLAG_CLIENT_HINT)
 		e2:SetCode(EFFECT_UNRELEASABLE_SUM)
 		e2:SetValue(1)
-		e2:SetReset(RESET_EVENT|RESETS_STANDARD&~RESET_TOFIELD|RESET_PHASE|PHASE_END)
+		e2:SetReset(RESET_EVENT|(RESETS_STANDARD&~RESET_TOFIELD)|RESET_PHASE|PHASE_END)
 		tc:RegisterEffect(e2,true)
 		local e3=e2:Clone()
 		e3:SetCode(EFFECT_UNRELEASABLE_NONSUM)

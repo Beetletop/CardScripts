@@ -60,15 +60,15 @@ function s.initial_effect(c)
 	e6:SetProperty(EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_DAMAGE_CAL)
 	e6:SetRange(LOCATION_MZONE)
 	e6:SetCondition(s.discon)
-	e6:SetCost(s.discost)
+	e6:SetCost(Cost.DetachFromSelf(1))
 	e6:SetTarget(s.distg)
 	e6:SetOperation(s.disop)
-	c:RegisterEffect(e6,false,REGISTER_FLAG_DETACH_XMAT)
+	c:RegisterEffect(e6)
 	--battle indestructable
 	local e7=Effect.CreateEffect(c)
 	e7:SetType(EFFECT_TYPE_SINGLE)
 	e7:SetCode(EFFECT_INDESTRUCTABLE_BATTLE)
-	e7:SetValue(aux.NOT(aux.TargetBoolFunction(Card.IsSetCard,0x48)))
+	e7:SetValue(aux.NOT(aux.TargetBoolFunction(Card.IsSetCard,SET_NUMBER)))
 	c:RegisterEffect(e7)
 	--Double Snare
 	local e8=Effect.CreateEffect(c)
@@ -80,13 +80,13 @@ function s.initial_effect(c)
 end
 s.xyz_number=43
 function s.eqval(ec,c,tp)
-	return ec:IsControler(tp) and ec:IsSetCard(0x48)
+	return ec:IsControler(tp) and ec:IsSetCard(SET_NUMBER)
 end
 function s.eqcon(e,tp,eg,ep,ev,re,r,rp)
-	return e:GetHandler():IsSummonType(SUMMON_TYPE_XYZ)
+	return e:GetHandler():IsXyzSummoned()
 end
 function s.filter(c)
-	return c:IsSetCard(0x48) and c:IsMonster()
+	return c:IsSetCard(SET_NUMBER) and c:IsMonster()
 end
 function s.eqtg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 	if chkc then return chkc:IsLocation(LOCATION_GRAVE) and chkc:IsControler(tp) and s.filter(chkc) end
@@ -106,7 +106,7 @@ function s.eqop(e,tp,eg,ep,ev,re,r,rp)
 	end
 end
 function s.indcon(e)
-	return e:GetHandler():GetEquipGroup():IsExists(Card.IsSetCard,1,nil,0x48)
+	return e:GetHandler():GetEquipGroup():IsExists(Card.IsSetCard,1,nil,SET_NUMBER)
 end
 function s.atkcon(e,tp,eg,ep,ev,re,r,rp)
 	return ep==tp
@@ -140,10 +140,6 @@ function s.discon(e,tp,eg,ep,ev,re,r,rp)
 	if not re:IsHasProperty(EFFECT_FLAG_CARD_TARGET) then return false end
 	local tg=Duel.GetChainInfo(ev,CHAININFO_TARGET_CARDS)
 	return tg and tg:IsExists(s.disfilter,1,nil,eq) and Duel.IsChainDisablable(ev)
-end
-function s.discost(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return e:GetHandler():CheckRemoveOverlayCard(tp,1,REASON_COST) end
-	e:GetHandler():RemoveOverlayCard(tp,1,1,REASON_COST)
 end
 function s.distg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return true end

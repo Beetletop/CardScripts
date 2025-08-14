@@ -1,4 +1,5 @@
 --ズババジェネラル
+--Zubaba General
 local s,id=GetID()
 function s.initial_effect(c)
 	--xyz summon
@@ -11,18 +12,14 @@ function s.initial_effect(c)
 	e1:SetCategory(CATEGORY_EQUIP)
 	e1:SetRange(LOCATION_MZONE)
 	e1:SetCountLimit(1)
-	e1:SetCost(s.eqcost)
+	e1:SetCost(Cost.DetachFromSelf(1))
 	e1:SetTarget(s.eqtg)
 	e1:SetOperation(s.eqop)
-	c:RegisterEffect(e1,false,REGISTER_FLAG_DETACH_XMAT)
+	c:RegisterEffect(e1)
 	aux.AddEREquipLimit(c,nil,s.eqval,s.equipop,e1)
 end
 function s.eqval(ec,c,tp)
 	return ec:IsControler(tp) and ec:IsRace(RACE_WARRIOR)
-end
-function s.eqcost(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return e:GetHandler():CheckRemoveOverlayCard(tp,1,REASON_COST) end
-	e:GetHandler():RemoveOverlayCard(tp,1,1,REASON_COST)
 end
 function s.filter(c,tp)
 	return c:IsRace(RACE_WARRIOR) and c:CheckUniqueOnField(tp) and not c:IsForbidden()
@@ -40,7 +37,7 @@ function s.equipop(c,e,tp,tc)
 		e2:SetType(EFFECT_TYPE_EQUIP)
 		e2:SetProperty(EFFECT_FLAG_IGNORE_IMMUNE+EFFECT_FLAG_OWNER_RELATE)
 		e2:SetCode(EFFECT_UPDATE_ATTACK)
-		e2:SetReset(RESET_EVENT+RESETS_STANDARD)
+		e2:SetReset(RESET_EVENT|RESETS_STANDARD)
 		e2:SetValue(atk)
 		tc:RegisterEffect(e2)
 	end

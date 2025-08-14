@@ -25,8 +25,8 @@ function s.initial_effect(c)
 	e2:SetRange(LOCATION_GRAVE)
 	e2:SetHintTiming(TIMING_DAMAGE_STEP,TIMING_DAMAGE_STEP|TIMINGS_CHECK_MONSTER_E)
 	e2:SetCountLimit(1,{id,1})
-	e2:SetCondition(function() return Duel.GetCurrentPhase()~=PHASE_DAMAGE or not Duel.IsDamageCalculated() end)
-	e2:SetCost(aux.bfgcost)
+	e2:SetCondition(aux.StatChangeDamageStepCondition)
+	e2:SetCost(Cost.SelfBanish)
 	e2:SetTarget(s.tdtg)
 	e2:SetOperation(s.tdop)
 	c:RegisterEffect(e2)
@@ -71,6 +71,6 @@ function s.tdop(e,tp,eg,ep,ev,re,r,rp)
 	local atkc=g:Filter(Card.IsLocation,nil,LOCATION_MZONE):GetFirst()
 	if tc and Duel.SendtoDeck(tc,nil,SEQ_DECKSHUFFLE,REASON_EFFECT)>0
 		and atkc and atkc:IsFaceup() and atkc:IsControler(tp) then
-		atkc:UpdateAttack(atkc:GetBaseAttack(),RESET_EVENT|RESETS_STANDARD|RESET_PHASE|PHASE_END,e:GetHandler())
+		atkc:UpdateAttack(atkc:GetBaseAttack(),RESETS_STANDARD_PHASE_END,e:GetHandler())
 	end
 end

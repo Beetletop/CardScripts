@@ -30,10 +30,9 @@ function s.initial_effect(c)
 end
 s.listed_series={SET_MAGICAL_MUSKET}
 function s.tdcon(e,tp,eg,ep,ev,re,r,rp)
+	if Duel.GetCurrentPhase()&(PHASE_DAMAGE|PHASE_DAMAGE_CAL)>0 or not re:IsHasType(EFFECT_TYPE_ACTIVATE) then return false end
 	local c=e:GetHandler()
-	local rc=re:GetHandler()
-	if Duel.GetCurrentPhase()&PHASE_DAMAGE+PHASE_DAMAGE_CAL~=0 or not re:IsHasType(EFFECT_TYPE_ACTIVATE) then return false end
-	local p,loc,seq=Duel.GetChainInfo(ev,CHAININFO_TRIGGERING_CONTROLER,CHAININFO_TRIGGERING_LOCATION,CHAININFO_TRIGGERING_SEQUENCE)
+	local p,seq=Duel.GetChainInfo(ev,CHAININFO_TRIGGERING_CONTROLER,CHAININFO_TRIGGERING_SEQUENCE)
 	return c:IsColumn(seq,p,LOCATION_SZONE)
 end
 function s.filter(c)
@@ -51,7 +50,7 @@ end
 function s.tdop(e,tp,eg,ep,ev,re,r,rp)
 	local tg=Duel.GetTargetCards(e)
 	if #tg~=3 then return end
-	Duel.SendtoDeck(tg,nil,0,REASON_EFFECT)
+	Duel.SendtoDeck(tg,nil,SEQ_DECKTOP,REASON_EFFECT)
 	local g=Duel.GetOperatedGroup()
 	if g:IsExists(Card.IsLocation,1,nil,LOCATION_DECK) then Duel.ShuffleDeck(tp) end
 	local ct=g:FilterCount(Card.IsLocation,nil,LOCATION_DECK|LOCATION_EXTRA)

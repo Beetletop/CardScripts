@@ -64,7 +64,7 @@ function Auxiliary.RankUpCheckCondition(condition,...)
 		for _,flagLabel in ipairs(flagLabels) do
 			if nameFilter[flagLabel] then return true end
 		end
-		return e:GetLabel()==1 and e:GetHandler():IsSummonType(SUMMON_TYPE_XYZ)
+		return e:GetLabel()==1 and e:GetHandler():IsXyzSummoned()
 			and (not condition or condition(e,tp,eg,ep,ev,re,r,rp))
 	end
 end
@@ -258,19 +258,13 @@ end
 -------------------------------------------------------------
 Cardian={}
 function Cardian.CheckSpCondition(c)
-	if c:IsSetCard(SET_FLOWER_CARDIAN) and c:IsMonster() then
-		local eff={c:GetCardEffect(511001692)}
-		for _,te2 in ipairs(eff) do
-			local te=te2:GetLabelObject()
-			if te:GetType()==EFFECT_TYPE_FIELD then
-				local con=te:GetCondition()
-				if not con or con(te,c) then
-					return true
-				end
-			else
-				if te:IsActivatable(te:GetHandlerPlayer(),true,true) then
-					return true
-				end
+	if not (c:IsSetCard(SET_FLOWER_CARDIAN) and c:IsMonster()) then return false end
+	local effs={c:GetOwnEffects()}
+	for _,eff in ipairs(effs) do
+		if eff:GetCode()&EFFECT_SPSUMMON_PROC==EFFECT_SPSUMMON_PROC then
+			local con=eff:GetCondition()
+			if con==nil or con(eff,c) then
+				return true
 			end
 		end
 	end
@@ -716,7 +710,7 @@ function UnofficialProc.cannotBattleIndes()
 		end
 	end
 	local function batregop(e,tp,eg,ep,ev,re,r,rp)
-		local tg=Duel.GetMatchingGroup(nil,tp,LOCATION_ONFIELD+LOCATION_GRAVE,LOCATION_ONFIELD+LOCATION_GRAVE,nil)
+		local tg=Duel.GetMatchingGroup(nil,tp,LOCATION_ONFIELD|LOCATION_GRAVE,LOCATION_ONFIELD|LOCATION_GRAVE,nil)
 		for tc in tg:Iter() do
 			local indes={tc:GetCardEffect(EFFECT_INDESTRUCTABLE)}
 			local indesBattle={tc:GetCardEffect(EFFECT_INDESTRUCTABLE_BATTLE)}

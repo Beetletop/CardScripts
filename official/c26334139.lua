@@ -1,5 +1,5 @@
 --廻る罪宝
---Sinful Spoils Cycle
+--Sinful Spoils Subdual
 --Scripted by Hatter
 local s,id=GetID()
 function s.initial_effect(c)
@@ -24,7 +24,7 @@ function s.initial_effect(c)
 	e2:SetRange(LOCATION_GRAVE)
 	e2:SetCountLimit(1,id)
 	e2:SetHintTiming(0,TIMING_MAIN_END|TIMING_BATTLE_END|TIMINGS_CHECK_MONSTER_E)
-	e2:SetCost(aux.selfbanishcost)
+	e2:SetCost(Cost.SelfBanish)
 	e2:SetTarget(s.thtg)
 	e2:SetOperation(s.thop)
 	c:RegisterEffect(e2)
@@ -59,7 +59,7 @@ function s.thspop(e,tp,eg,ep,ev,re,r,rp)
 				e1:SetProperty(EFFECT_FLAG_CLIENT_HINT)
 				e1:SetCode(EFFECT_CANNOT_TRIGGER)
 				e1:SetCondition(function(e) return Duel.IsMainPhase() and e:GetHandler():IsControler(tp) end)
-				e1:SetReset(RESET_EVENT|RESETS_STANDARD|RESET_PHASE|PHASE_END)
+				e1:SetReset(RESETS_STANDARD_PHASE_END)
 				sc:RegisterEffect(e1)
 			end
 			Duel.SpecialSummonComplete()

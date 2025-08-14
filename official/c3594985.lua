@@ -1,5 +1,5 @@
 --マジェスペクター・ドラコ
---Majespecter Draco
+--Majespecter Draco - Ryu
 --Scripted by Hatter
 local s,id=GetID()
 function s.initial_effect(c)
@@ -28,10 +28,10 @@ function s.initial_effect(c)
 	e2:SetRange(LOCATION_MZONE)
 	e2:SetCountLimit(2,{id,1})
 	e2:SetCondition(s.spcon)
-	e2:SetCost(aux.dxmcostgen(1,1,nil))
+	e2:SetCost(Cost.DetachFromSelf(1,1,nil))
 	e2:SetTarget(s.sptg)
 	e2:SetOperation(s.spop)
-	c:RegisterEffect(e2,false,REGISTER_FLAG_DETACH_XMAT)
+	c:RegisterEffect(e2)
 	--Place this card in the Pendulum Zone
 	local e3=Effect.CreateEffect(c)
 	e3:SetDescription(aux.Stringid(id,2))

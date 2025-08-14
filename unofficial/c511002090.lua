@@ -23,9 +23,9 @@ function s.initial_effect(c)
 	e2:SetType(EFFECT_TYPE_IGNITION)
 	e2:SetCountLimit(1)
 	e2:SetRange(LOCATION_MZONE)
-	e2:SetCost(s.lpcost)
+	e2:SetCost(Cost.DetachFromSelf(1))
 	e2:SetOperation(s.lpop)
-	c:RegisterEffect(e2,false,REGISTER_FLAG_DETACH_XMAT)
+	c:RegisterEffect(e2)
 	--lp - 0 materials
 	local e3=Effect.CreateEffect(c)
 	e3:SetDescription(aux.Stringid(52090844,0))
@@ -71,13 +71,13 @@ function s.initial_effect(c)
 end
 s.xyz_number=6
 function s.eqval(ec,c,tp)
-	return ec:IsControler(tp) and ec:IsSetCard(0x48)
+	return ec:IsControler(tp) and ec:IsSetCard(SET_NUMBER)
 end
 function s.eqcon(e,tp,eg,ep,ev,re,r,rp)
-	return e:GetHandler():IsSummonType(SUMMON_TYPE_XYZ)
+	return e:GetHandler():IsXyzSummoned()
 end
 function s.filter(c)
-	return c:IsSetCard(0x48) and c:IsMonster()
+	return c:IsSetCard(SET_NUMBER) and c:IsMonster()
 end
 function s.eqtg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 	if chkc then return chkc:IsLocation(LOCATION_GRAVE) and chkc:IsControler(tp) and s.filter(chkc) end
@@ -109,10 +109,6 @@ function s.eqop(e,tp,eg,ep,ev,re,r,rp)
 		s.equipop(c,e,tp,tc)
 	end
 end
-function s.lpcost(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return e:GetHandler():CheckRemoveOverlayCard(tp,1,REASON_COST) end
-	e:GetHandler():RemoveOverlayCard(tp,1,1,REASON_COST)
-end
 function s.lpop(e,tp,eg,ep,ev,re,r,rp)
 	Duel.SetLP(1-tp,Duel.GetLP(1-tp)/2)
 end
@@ -143,5 +139,5 @@ function s.lpchk(e,tp,eg,ep,ev,re,r,rp)
 	s[1-tp]=Duel.GetLP(1-tp)
 end
 function s.indes(e,c)
-	return not c:IsSetCard(0x48)
+	return not c:IsSetCard(SET_NUMBER)
 end

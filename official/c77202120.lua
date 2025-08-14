@@ -22,7 +22,7 @@ function s.initial_effect(c)
 	e2:SetCode(EVENT_LEAVE_FIELD)
 	e2:SetRange(LOCATION_GRAVE)
 	e2:SetCountLimit(1,{id,1})
-	e2:SetCost(aux.bfgcost)
+	e2:SetCost(Cost.SelfBanish)
 	e2:SetTarget(s.sptg)
 	e2:SetOperation(s.spop)
 	c:RegisterEffect(e2)
@@ -40,7 +40,7 @@ function s.spselfop(e,tp,eg,ep,ev,re,r,rp)
 	if Duel.SpecialSummon(c,0,tp,tp,false,false,POS_FACEUP)>0 then
 		Duel.BreakEffect()
 		Duel.Damage(tp,700,REASON_EFFECT)
-		-- Cannot Special Summon monsters from the Extra Deck, except Synchro Monsters
+		--Cannot Special Summon monsters from the Extra Deck, except Synchro Monsters
 		local e1=Effect.CreateEffect(c)
 		e1:SetType(EFFECT_TYPE_FIELD)
 		e1:SetProperty(EFFECT_FLAG_PLAYER_TARGET+EFFECT_FLAG_CANNOT_DISABLE)
@@ -50,7 +50,7 @@ function s.spselfop(e,tp,eg,ep,ev,re,r,rp)
 		e1:SetTarget(function(_,c) return c:IsLocation(LOCATION_EXTRA) and not c:IsType(TYPE_SYNCHRO) end)
 		e1:SetReset(RESET_EVENT|RESETS_STANDARD)
 		c:RegisterEffect(e1,true)
-		-- Clock Lizard check
+		--Clock Lizard check
 		local e2=aux.createContinuousLizardCheck(c,LOCATION_MZONE,function(_,c) return not c:IsOriginalType(TYPE_SYNCHRO) end)
 		e2:SetReset(RESET_EVENT|RESETS_STANDARD)
 		c:RegisterEffect(e2,true)

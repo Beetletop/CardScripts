@@ -1,5 +1,5 @@
 --Ｃｏｎｃｏｕｒｓ ｄｅ Ｃｕｉｓｉｎｅ～菓冷なる料理対決～
---Concours de Cuisine (Confectionery Contest)
+--Concours de Cuisine (Culinary Confrontation)
 --scripted by Naim
 local s,id=GetID()
 function s.initial_effect(c)
@@ -22,7 +22,7 @@ function s.initial_effect(c)
 	e2:SetProperty(EFFECT_FLAG_CARD_TARGET)
 	e2:SetRange(LOCATION_GRAVE)
 	e2:SetCountLimit(1,{id,1})
-	e2:SetCost(aux.bfgcost)
+	e2:SetCost(Cost.SelfBanish)
 	e2:SetTarget(s.atktg)
 	e2:SetOperation(s.atkop)
 	c:RegisterEffect(e2)
@@ -52,30 +52,24 @@ function s.target(e,tp,eg,ep,ev,re,r,rp,chk)
 	local g1=Duel.GetMatchingGroup(s.cfilter,tp,locs,0,nil,SET_NOUVELLES)
 	local g2=Duel.GetMatchingGroup(s.cfilter,tp,locs,0,nil,SET_PATISSCIEL)
 	local g=g1+g2
-	if chk==0 then return #g1>0 and #g2>0 and aux.SelectUnselectGroup(g,e,tp,2,2,s.rescon,0) end
+	if chk==0 then return #g1>0 and #g2>0
+		and not Duel.IsPlayerAffectedByEffect(tp,CARD_BLUEEYES_SPIRIT)
+		and aux.SelectUnselectGroup(g,e,tp,2,2,s.rescon,0) end
 	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,nil,2,tp,locs)
 end
 function s.operation(e,tp,eg,ep,ev,re,r,rp)
+	if Duel.IsPlayerAffectedByEffect(tp,CARD_BLUEEYES_SPIRIT) then return end
 	local c=e:GetHandler()
-	--Cannot use monsters as material for a Fusion/Synchro/Xyz/Link Summon, except "Nouvelles" and "Patissciel" monsters
+	--You cannot use monsters as material for a Fusion, Synchro, Xyz, or Link Summon, except "Nouvelles" and "Patissciel" monsters
 	local e1=Effect.CreateEffect(c)
 	e1:SetType(EFFECT_TYPE_FIELD)
 	e1:SetProperty(EFFECT_FLAG_SET_AVAILABLE+EFFECT_FLAG_IGNORE_IMMUNE)
-	e1:SetCode(EFFECT_CANNOT_BE_FUSION_MATERIAL)
+	e1:SetCode(EFFECT_CANNOT_BE_MATERIAL)
 	e1:SetTargetRange(LOCATION_ALL,LOCATION_ALL)
 	e1:SetTarget(function(e,c) return not c:IsSetCard({SET_NOUVELLES,SET_PATISSCIEL}) end)
 	e1:SetValue(s.sumlimit)
 	e1:SetReset(RESET_PHASE|PHASE_END)
 	Duel.RegisterEffect(e1,tp)
-	local e2=e1:Clone()
-	e2:SetCode(EFFECT_CANNOT_BE_SYNCHRO_MATERIAL)
-	Duel.RegisterEffect(e2,tp)
-	local e3=e1:Clone()
-	e3:SetCode(EFFECT_CANNOT_BE_XYZ_MATERIAL)
-	Duel.RegisterEffect(e3,tp)
-	local e4=e1:Clone()
-	e4:SetCode(EFFECT_CANNOT_BE_LINK_MATERIAL)
-	Duel.RegisterEffect(e4,tp)
 	aux.RegisterClientHint(c,nil,tp,1,0,aux.Stringid(id,2))
 	--Special Summon 1 "Nouvelles" monster and 1 "Patissciel" monster
 	local g1=Duel.GetMatchingGroup(s.cfilter,tp,locs,0,nil,SET_NOUVELLES)
@@ -91,9 +85,11 @@ function s.operation(e,tp,eg,ep,ev,re,r,rp)
 	Duel.SpecialSummonStep(sc2,0,tp,1-tp,false,false,POS_FACEUP)
 	Duel.SpecialSummonComplete()
 end
-function s.sumlimit(e,c)
-	if not c then return false end
-	return c:IsControler(e:GetHandlerPlayer())
+function s.sumlimit(e,sumc,sumtype,sumplayer)
+	if not sumc then return false end
+	local tp=e:GetHandlerPlayer()
+	return sumplayer==tp and sumc:IsControler(tp)
+		and aux.cannotmatfilter(SUMMON_TYPE_FUSION,SUMMON_TYPE_SYNCHRO,SUMMON_TYPE_XYZ,SUMMON_TYPE_LINK)(e,sumc,sumtype,sumplayer)
 end
 function s.atktg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 	local ct=Duel.GetMatchingGroupCount(Card.IsSetCard,tp,LOCATION_GRAVE,LOCATION_GRAVE,nil,SET_RECIPE)

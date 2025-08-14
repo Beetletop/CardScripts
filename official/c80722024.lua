@@ -1,9 +1,9 @@
--- メメント・ボーン・パーティー
--- Memento Bone Party
--- Scripted by Satellaa
+--メメント・ボーン・パーティー
+--Mementotlan Bone Party
+--Scripted by Satellaa
 local s,id=GetID()
 function s.initial_effect(c)
-	-- Add or Special Summon 1 "Memento" monster from your Deck
+	--Add or Special Summon 1 "Memento" monster from your Deck
 	local e1=Effect.CreateEffect(c)
 	e1:SetDescription(aux.Stringid(id,0))
 	e1:SetCategory(CATEGORY_SPECIAL_SUMMON+CATEGORY_SEARCH+CATEGORY_TOHAND+CATEGORY_DESTROY)
@@ -14,14 +14,14 @@ function s.initial_effect(c)
 	e1:SetTarget(s.target)
 	e1:SetOperation(s.activate)
 	c:RegisterEffect(e1)
-	-- Targeted "Memento" inflicts piercing damage
+	--Targeted "Memento" inflicts piercing damage
 	local e2=Effect.CreateEffect(c)
 	e2:SetDescription(aux.Stringid(id,1))
 	e2:SetType(EFFECT_TYPE_IGNITION)
 	e2:SetProperty(EFFECT_FLAG_CARD_TARGET)
 	e2:SetRange(LOCATION_GRAVE)
 	e2:SetCountLimit(1,{id,1})
-	e2:SetCost(aux.bfgcost)
+	e2:SetCost(Cost.SelfBanish)
 	e2:SetTarget(s.pdtg)
 	e2:SetOperation(s.pdop)
 	c:RegisterEffect(e2)
@@ -72,13 +72,13 @@ end
 function s.pdop(e,tp,eg,ep,ev,re,r,rp)
 	local tc=Duel.GetFirstTarget()
 	if tc:IsRelateToEffect(e) and tc:IsFaceup() then
-		-- Inflicts piercing damage
+		--Inflicts piercing damage
 		local e1=Effect.CreateEffect(e:GetHandler())
 		e1:SetDescription(3208)
 		e1:SetType(EFFECT_TYPE_SINGLE)
 		e1:SetProperty(EFFECT_FLAG_CLIENT_HINT)
 		e1:SetCode(EFFECT_PIERCE)
-		e1:SetReset(RESET_EVENT|RESETS_STANDARD|RESET_PHASE|PHASE_END)
+		e1:SetReset(RESETS_STANDARD_PHASE_END)
 		tc:RegisterEffect(e1)
 	end
 end

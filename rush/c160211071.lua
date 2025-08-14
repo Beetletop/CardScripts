@@ -23,7 +23,7 @@ function s.drcost(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.IsExistingMatchingCard(s.costfilter,tp,LOCATION_HAND,0,1,nil) and Duel.IsPlayerCanDiscardDeck(tp,2) end
 end
 function s.drtg(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return Duel.IsPlayerCanDraw(tp,1) and Duel.GetMatchingGroupCountRush(nil,tp,LOCATION_DECK,0,nil)>2 end
+	if chk==0 then return Duel.IsPlayerCanDraw(tp,1) and Duel.GetMatchingGroupCountRush(aux.TRUE,tp,LOCATION_DECK,0,nil)>2 end
 	Duel.SetTargetPlayer(tp)
 	Duel.SetTargetParam(1)
 	Duel.SetOperationInfo(0,CATEGORY_DRAW,nil,0,tp,1)
@@ -37,7 +37,7 @@ function s.drop(e,tp,eg,ep,ev,re,r,rp)
 	--Effect
 	local p,d=Duel.GetChainInfo(0,CHAININFO_TARGET_PLAYER,CHAININFO_TARGET_PARAM)
 	local sg=Duel.GetMatchingGroup(Card.IsCanChangePositionRush,tp,LOCATION_MZONE,LOCATION_MZONE,nil)
-	if Duel.Draw(p,d,REASON_EFFECT)>0 and Duel.IsExistingMatchingCard(Card.IsType,tp,LOCATION_GRAVE,0,1,nil,TYPE_NORMAL) 
+	if Duel.Draw(p,d,REASON_EFFECT)>0 and Duel.IsExistingMatchingCard(Card.IsType,tp,LOCATION_GRAVE,0,1,nil,TYPE_NORMAL)
 		and #sg>0 and Duel.SelectYesNo(tp,aux.Stringid(id,1)) then
 		Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_POSCHANGE)
 		local sc=Group.Select(sg,tp,1,1,nil)

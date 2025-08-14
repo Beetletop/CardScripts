@@ -1,5 +1,5 @@
 --白き森のシルヴィ
---Silve of the White Forest
+--Silvy of the White Forest
 --Scripted by Hatter
 local s,id=GetID()
 function s.initial_effect(c)
@@ -26,7 +26,7 @@ function s.initial_effect(c)
 	e3:SetCode(EVENT_FREE_CHAIN)
 	e3:SetRange(LOCATION_GRAVE)
 	e3:SetCountLimit(1,{id,1})
-	e3:SetHintTiming(0,TIMINGS_CHECK_MONSTER_E+TIMING_MAIN_END)
+	e3:SetHintTiming(0,TIMINGS_CHECK_MONSTER_E|TIMING_MAIN_END)
 	e3:SetTarget(s.tdtg)
 	e3:SetOperation(s.tdop)
 	c:RegisterEffect(e3)

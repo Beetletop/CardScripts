@@ -1,5 +1,5 @@
 --昆虫機甲鎧
---Bio Insect Armor
+--Bio-Insect Armor
 --scripted by Naim
 local s,id=GetID()
 function s.initial_effect(c)
@@ -19,7 +19,7 @@ function s.initial_effect(c)
 	local e2=Effect.CreateEffect(c)
 	e2:SetType(EFFECT_TYPE_EQUIP)
 	e2:SetCode(EFFECT_UPDATE_ATTACK)
-	e2:SetCondition(function() return Duel.IsBattlePhase() or Duel.GetCurrentPhase()==PHASE_MAIN2 end)
+	e2:SetCondition(function() return Duel.IsBattlePhase() or Duel.IsPhase(PHASE_MAIN2) end)
 	e2:SetValue(1500)
 	c:RegisterEffect(e2)
 	local e3=e2:Clone()

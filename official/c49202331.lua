@@ -1,4 +1,5 @@
 --CX 超巨大空中要塞バビロン
+--CXyz Skypalace Babylon
 local s,id=GetID()
 function s.initial_effect(c)
 	--xyz summon
@@ -22,9 +23,9 @@ function s.initial_effect(c)
 	e2:SetCode(EVENT_BATTLE_DESTROYING)
 	e2:SetCountLimit(1)
 	e2:SetCondition(s.atcon)
-	e2:SetCost(s.atcost)
+	e2:SetCost(Cost.DetachFromSelf(1))
 	e2:SetOperation(s.atop)
-	c:RegisterEffect(e2,false,REGISTER_FLAG_DETACH_XMAT)
+	c:RegisterEffect(e2)
 end
 s.listed_names={3814632}
 function s.damtg(e,tp,eg,ep,ev,re,r,rp,chk)
@@ -50,10 +51,6 @@ function s.atcon(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	return aux.bdcon(e,tp,eg,ep,ev,re,r,rp) and c:CanChainAttack()
 		and c:GetOverlayGroup():IsExists(Card.IsCode,1,nil,3814632)
-end
-function s.atcost(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return e:GetHandler():CheckRemoveOverlayCard(tp,1,REASON_COST) end
-	e:GetHandler():RemoveOverlayCard(tp,1,1,REASON_COST)
 end
 function s.atop(e,tp,eg,ep,ev,re,r,rp)
 	Duel.ChainAttack()

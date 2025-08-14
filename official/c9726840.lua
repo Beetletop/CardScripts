@@ -1,9 +1,9 @@
--- 閃刀起動－リンケージ
--- Sky Striker Mobilize - Linkage!
--- Scripted by Hatter
+--閃刀起動－リンケージ
+--Sky Striker Mobilize - Linkage!
+--Scripted by Hatter
 local s,id=GetID()
 function s.initial_effect(c)
-	-- Send 1 card to the GY
+	--Send 1 card to the GY
 	local e1=Effect.CreateEffect(c)
 	e1:SetDescription(aux.Stringid(id,0))
 	e1:SetCategory(CATEGORY_TOGRAVE+CATEGORY_SPECIAL_SUMMON)
@@ -53,19 +53,18 @@ function s.tgop(e,tp,eg,ep,ev,re,r,rp)
 	if #g<1 or Duel.SendtoGrave(g,REASON_EFFECT)<1 or not g:GetFirst():IsLocation(LOCATION_GRAVE) then return end
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SPSUMMON)
 	local sc=Duel.SelectMatchingCard(tp,s.spfilter,tp,LOCATION_EXTRA,0,1,1,nil,e,tp):GetFirst()
-	if sc and Duel.SpecialSummonStep(sc,0,tp,tp,false,false,POS_FACEUP,ZONES_EMZ)
+	if sc and Duel.SpecialSummon(sc,0,tp,tp,false,false,POS_FACEUP,ZONES_EMZ)>0
 		and Duel.IsExistingMatchingCard(s.attfilter,tp,LOCATION_MZONE|LOCATION_GRAVE,0,1,nil,ATTRIBUTE_DARK)
 		and Duel.IsExistingMatchingCard(s.attfilter,tp,LOCATION_MZONE|LOCATION_GRAVE,0,1,nil,ATTRIBUTE_LIGHT) then
-		-- Gain ATK
+		--Gain ATK
 		local e1=Effect.CreateEffect(c)
 		e1:SetType(EFFECT_TYPE_SINGLE)
 		e1:SetCode(EFFECT_UPDATE_ATTACK)
 		e1:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
 		e1:SetValue(1000)
 		e1:SetReset(RESET_EVENT|RESETS_STANDARD)
-		sc:RegisterEffect(e1)
+		sc:RegisterEffect(e1,true)
 	end
-	Duel.SpecialSummonComplete()
 end
 function s.splimit(e,c,sump,sumtype,sumpos,targetp,se)
 	return c:IsLocation(LOCATION_EXTRA) and not c:IsSetCard(SET_SKY_STRIKER_ACE)

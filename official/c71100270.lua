@@ -1,11 +1,11 @@
 --百鬼羅刹の大饕獣
---Goblins' Crazy Beast
+--Goblin's Crazy Beast
 --Scripted by Hatter
 local s,id=GetID()
 function s.initial_effect(c)
 	c:EnableReviveLimit()
 	--2+ Level 6 monsters
-	Xyz.AddProcedure(c,nil,6,2,nil,nil,99)
+	Xyz.AddProcedure(c,nil,6,2,nil,nil,Xyz.InfiniteMats)
 	--Detach 2 materials from a monster(s) on the field
 	local e1=Effect.CreateEffect(c)
 	e1:SetDescription(aux.Stringid(id,0))

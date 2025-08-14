@@ -1,5 +1,5 @@
 --燦幻昇龍バイデント・ドラギオン
---Sangen Risedragon Bident Dragion
+--Sangenpai Bident Dragion
 --scripted by Naim
 local s,id=GetID()
 function s.initial_effect(c)
@@ -13,7 +13,7 @@ function s.initial_effect(c)
 	e1:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
 	e1:SetProperty(EFFECT_FLAG_CARD_TARGET+EFFECT_FLAG_DELAY)
 	e1:SetCode(EVENT_SPSUMMON_SUCCESS)
-	e1:SetCondition(function(e) return e:GetHandler():IsSummonType(SUMMON_TYPE_SYNCHRO) end)
+	e1:SetCondition(function(e) return e:GetHandler():IsSynchroSummoned() end)
 	e1:SetCountLimit(1,id)
 	e1:SetTarget(s.gysptg)
 	e1:SetOperation(s.gyspop)

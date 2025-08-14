@@ -30,7 +30,7 @@ function s.initial_effect(c)
 	e3:SetCode(EVENT_ATTACK_ANNOUNCE)
 	e3:SetRange(LOCATION_MZONE)
 	e3:SetCondition(function(e,tp) return Duel.GetAttacker():IsControler(1-tp) end)
-	e3:SetCost(aux.selfreleasecost)
+	e3:SetCost(Cost.SelfTribute)
 	e3:SetTarget(s.destg1)
 	e3:SetOperation(s.desop1)
 	c:RegisterEffect(e3)
@@ -42,6 +42,8 @@ function s.initial_effect(c)
 	e4:SetOperation(s.desop2)
 	c:RegisterEffect(e4)
 end
+s.LVnum=6
+s.LVset=SET_WINGED_KURIBOH
 s.listed_names={57116033} --Winged Kuriboh
 s.listed_series={SET_ELEMENTAL_HERO,SET_FAVORITE}
 function s.spcfilter(c)

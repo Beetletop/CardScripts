@@ -1,9 +1,9 @@
 --Ｒｅｃｅｔｔｅ ｄｅ Ｐｏｉｓｓｏｎ～魚料理のレシピ～
---Recette de Poisson - Fish Recipe
+--Recette de Poisson (Fish Recipe)
 --scripted by Naim
 local s,id=GetID()
 function s.initial_effect(c)
-	-- Ritual Summon any "Nouvelles" monster
+	--Ritual Summon any "Nouvelles" monster
 	local e1=Ritual.AddProcGreater({handler=c,filter=aux.FilterBoolFunction(Card.IsSetCard,SET_NOUVELLES),
 		stage2=s.stage2,extratg=s.extratg})
 	e1:SetCategory(e1:GetCategory()|CATEGORY_SEARCH|CATEGORY_TOHAND)

@@ -1,5 +1,5 @@
 --氷霊山の龍祖 ランセア
---Lancea, Dragonic Ancestor of the Ice Spirit Mountain
+--Lancea, Ancestral Dragon of the Ice Mountain
 --Scripted by fiftyfour
 local s,id=GetID()
 function s.initial_effect(c)
@@ -65,7 +65,7 @@ end
 function s.exspcon(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	return rp==1-tp and c:IsPreviousPosition(POS_FACEUP) and c:IsPreviousLocation(LOCATION_MZONE) and c:IsPreviousControler(tp)
-		and c:IsSummonType(SUMMON_TYPE_SYNCHRO)
+		and c:IsSynchroSummoned()
 end
 function s.exspfilter(c,e,tp)
 	return c:IsSetCard(SET_ICE_BARRIER) and c:IsType(TYPE_SYNCHRO) and Duel.GetLocationCountFromEx(tp,tp,nil,c)>0

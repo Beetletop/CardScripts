@@ -1,12 +1,12 @@
--- エピュアリィ・プランプ
--- Epurrely Plump
--- Scripted by Hatter
+--エピュアリィ・プランプ
+--Epurrely Plump
+--Scripted by Hatter
 local s,id=GetID()
 function s.initial_effect(c)
 	c:EnableReviveLimit()
-	-- 2 Level 2 monsters
+	--Xyz Summon procedure: 2 Level 2 monsters
 	Xyz.AddProcedure(c,nil,2,2)
-	-- Attach 2 Spell/Trap cards
+	--Attach 2 Spell/Trap cards
 	local e1=Effect.CreateEffect(c)
 	e1:SetDescription(aux.Stringid(id,0))
 	e1:SetCategory(CATEGORY_LEAVE_GRAVE)
@@ -23,7 +23,7 @@ function s.initial_effect(c)
 	e2:SetCode(EVENT_FREE_CHAIN)
 	e2:SetHintTiming(0,TIMING_END_PHASE)
 	c:RegisterEffect(e2)
-	-- Attach "Purrely" Quick-Play Spell
+	--Attach "Purrely" Quick-Play Spell
 	local e3=Effect.CreateEffect(c)
 	e3:SetDescription(aux.Stringid(id,1))
 	e3:SetCategory(CATEGORY_REMOVE)
@@ -64,7 +64,7 @@ function s.qpovcon(e,tp,eg,ep,ev,re,r,rp)
 	if rp==1-tp or not re:IsHasType(EFFECT_TYPE_ACTIVATE) then return false end
 	local rc=re:GetHandler()
 	return rc:IsSetCard(SET_PURRELY) and rc:IsQuickPlaySpell()
-		and rc:IsOnField() and rc:IsCanBeXyzMaterial(e:GetHandler(),tc,REASON_EFFECT)
+		and rc:IsOnField() and rc:IsCanBeXyzMaterial(e:GetHandler(),tp,REASON_EFFECT)
 end
 function s.qpovtg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return true end

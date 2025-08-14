@@ -6,7 +6,7 @@ if not Link then
 	Link = aux.LinkProcedure
 end
 --Link Summon
-function Link.AddProcedure(c,f,min,max,specialchk,desc)
+function Link.AddProcedure(c,f,min,max,specialchk,desc,spcon)
 	local e1=Effect.CreateEffect(c)
 	e1:SetType(EFFECT_TYPE_FIELD)
 	if desc then
@@ -18,7 +18,7 @@ function Link.AddProcedure(c,f,min,max,specialchk,desc)
 	e1:SetProperty(EFFECT_FLAG_CANNOT_DISABLE+EFFECT_FLAG_UNCOPYABLE+EFFECT_FLAG_IGNORE_IMMUNE)
 	e1:SetRange(LOCATION_EXTRA)
 	if max==nil then max=c:GetLink() end
-	e1:SetCondition(Link.Condition(f,min,max,specialchk))
+	e1:SetCondition(Link.Condition(f,min,max,specialchk,spcon))
 	e1:SetTarget(Link.Target(f,min,max,specialchk))
 	e1:SetOperation(Link.Operation(f,min,max,specialchk))
 	e1:SetValue(SUMMON_TYPE_LINK)
@@ -27,7 +27,7 @@ end
 function Link.ConditionFilter(c,f,lc,tp)
 	local res1=c:IsCanBeLinkMaterial(lc,tp) and (not f or f(c,lc,SUMMON_TYPE_LINK|MATERIAL_LINK,tp))
 	local res2=false
-	local formud_eff=c:IsHasEffect(50366775)
+	local formud_eff=c:IsHasEffect(EFFECT_FORMUD_SKIPPER)
 	if formud_eff then
 		local label={formud_eff:GetLabel()}
 		for i=1,#label-1,2 do
@@ -104,11 +104,14 @@ function Link.CheckGoal(tp,sg,lc,minc,f,specialchk,filt)
 	return #sg>=minc and sg:CheckWithSumEqual(Link.GetLinkCount,lc:GetLink(),#sg,#sg)
 		and (not specialchk or specialchk(sg,lc,SUMMON_TYPE_LINK|MATERIAL_LINK,tp)) and Duel.GetLocationCountFromEx(tp,tp,sg,lc)>0
 end
-function Link.Condition(f,minc,maxc,specialchk)
+function Link.Condition(f,minc,maxc,specialchk,spcon)
 	return	function(e,c,must,g,min,max)
 				if c==nil then return true end
 				if c:IsType(TYPE_PENDULUM) and c:IsFaceup() then return false end
 				local tp=c:GetControler()
+				if spcon and not spcon(e,e,tp,SUMMON_TYPE_LINK) then
+					return false
+				end
 				if not g then
 					g=Duel.GetMatchingGroup(Card.IsFaceup,tp,LOCATION_MZONE,0,nil)
 				end
@@ -200,7 +203,7 @@ function Link.Operation(f,minc,maxc,specialchk)
 					end
 				end
 				for tc in g:Iter() do
-					local formud_eff=tc:IsHasEffect(50366775)
+					local formud_eff=tc:IsHasEffect(EFFECT_FORMUD_SKIPPER)
 					if formud_eff then
 						local res1=tc:IsCanBeLinkMaterial(c,tp) and (not f or f(tc,c,SUMMON_TYPE_LINK|MATERIAL_LINK,tp))
 						local label={formud_eff:GetLabel()}

@@ -4,7 +4,7 @@ local s,id=GetID()
 function s.initial_effect(c)
 	c:EnableReviveLimit()
 	Pendulum.AddProcedure(c,false)
-	Xyz.AddProcedure(c,aux.FilterBoolFunctionEx(Card.IsSetCard,0x10af),8,2)
+	Xyz.AddProcedure(c,aux.FilterBoolFunctionEx(Card.IsSetCard,SET_DDD),8,2)
 	--xyz indes
 	local e1=Effect.CreateEffect(c)
 	e1:SetType(EFFECT_TYPE_FIELD)
@@ -55,10 +55,10 @@ function s.initial_effect(c)
 	e7:SetDescription(aux.Stringid(id,1))
 	e7:SetType(EFFECT_TYPE_IGNITION)
 	e7:SetRange(LOCATION_MZONE)
-	e7:SetCost(s.descost)
+	e7:SetCost(Cost.DetachFromSelf(1))
 	e7:SetTarget(s.destg)
 	e7:SetOperation(s.desop)
-	c:RegisterEffect(e7,false,REGISTER_FLAG_DETACH_XMAT)
+	c:RegisterEffect(e7)
 end
 s.listed_series={0x10af}
 s.listed_names={47198668}
@@ -71,7 +71,7 @@ function s.valcheck(e,c)
 	end
 end
 function s.xyzcon(e,tp,eg,ep,ev,re,r,rp)
-	return e:GetHandler():IsSummonType(SUMMON_TYPE_XYZ) and e:GetLabel()==1
+	return e:GetHandler():IsXyzSummoned() and e:GetLabel()==1
 end
 function s.xyzfilter(c)
 	return c:IsFaceup() and c:IsCode(47198668)
@@ -87,10 +87,6 @@ function s.xyzop(e,tp,eg,ep,ev,re,r,rp)
 	if #g>0 then
 		Duel.Overlay(c,g)
 	end
-end
-function s.descost(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return e:GetHandler():CheckRemoveOverlayCard(tp,1,REASON_COST) end
-	e:GetHandler():RemoveOverlayCard(tp,1,1,REASON_COST)	
 end
 function s.cfilter(c)
 	return c:IsFaceup() and c:IsType(TYPE_PENDULUM)

@@ -16,7 +16,7 @@ function s.initial_effect(c)
 	e1:SetType(EFFECT_TYPE_FIELD)
 	e1:SetProperty(EFFECT_FLAG_CANNOT_DISABLE+EFFECT_FLAG_UNCOPYABLE)
 	e1:SetCode(EFFECT_SPSUMMON_PROC)
-	e1:SetRange(LOCATION_HAND+LOCATION_GRAVE)
+	e1:SetRange(LOCATION_HAND|LOCATION_GRAVE)
 	e1:SetCondition(s.spcon)
 	e1:SetTarget(s.sptg)
 	e1:SetOperation(s.spop)
@@ -88,7 +88,7 @@ function s.rmvop(e,tp,eg,ep,ev,re,r,rp)
 		local fid=c:GetFieldID()
 		local og=Duel.GetOperatedGroup()
 		for oc in og:Iter() do
-			oc:RegisterFlagEffect(id,RESET_EVENT|RESETS_STANDARD|RESET_PHASE|PHASE_END,0,2,fid)
+			oc:RegisterFlagEffect(id,RESETS_STANDARD_PHASE_END,0,2,fid)
 		end
 		og:KeepAlive()
 		--Return the banished cards to the Extra Deck

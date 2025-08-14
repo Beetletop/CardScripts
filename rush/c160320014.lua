@@ -1,5 +1,5 @@
 --放浪の勇者 フリード
---Freed the Brave Wanderer
+--Freed the Brave Wanderer (Rush)
 --Scripted by YoshiDuels
 local s,id=GetID()
 function s.initial_effect(c)
@@ -35,7 +35,10 @@ function s.operation(e,tp,eg,ep,ev,re,r,rp)
 	local g=Duel.SelectMatchingCard(tp,s.cfilter,tp,LOCATION_GRAVE,0,2,2,nil)
 	Duel.HintSelection(g)
 	Duel.SendtoDeck(g,nil,SEQ_DECKBOTTOM,REASON_EFFECT)
-	Duel.SortDeckbottom(tp,tp,#g)
+	local g2=Duel.GetOperatedGroup():Filter(Card.IsLocation,nil,LOCATION_DECK)
+	if #g2>1 then
+		Duel.SortDeckbottom(tp,tp,#g2)
+	end
 	--Effect
 	local dg=Duel.GetMatchingGroup(s.filter,tp,LOCATION_MZONE,LOCATION_MZONE,nil,e:GetHandler():GetAttack())
 	if #dg>0 then

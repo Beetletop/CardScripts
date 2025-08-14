@@ -10,15 +10,10 @@ function s.initial_effect(c)
 	e1:SetCode(EVENT_PHASE+PHASE_END)
 	e1:SetRange(LOCATION_MZONE|LOCATION_HAND)
 	e1:SetCountLimit(1,id)
-	e1:SetCost(s.excvtcost)
+	e1:SetCost(Cost.SelfToGrave)
 	e1:SetTarget(s.excvttg)
 	e1:SetOperation(s.excvtop)
 	c:RegisterEffect(e1)
-end
-function s.excvtcost(e,tp,eg,ep,ev,re,r,rp,chk)
-	local c=e:GetHandler()
-	if chk==0 then return c:IsAbleToGraveAsCost() end
-	Duel.SendtoGrave(c,REASON_COST)
 end
 function s.excvttg(e,tp,eg,ep,ev,re,r,rp,chk)
 	local ct=5-Duel.GetMatchingGroupCount(nil,tp,0,LOCATION_STZONE,nil)
@@ -39,7 +34,7 @@ function s.excvtop(e,tp,eg,ep,ev,re,r,rp)
 		local tc=g:FilterSelect(tp,s.setfilter,1,1,nil):GetFirst()
 		if tc and Duel.SSet(tp,tc) then
 			local fid=tc:GetFieldID()
-			tc:RegisterFlagEffect(id,RESET_EVENT|RESETS_STANDARD|RESET_PHASE|PHASE_END,0,2,fid)
+			tc:RegisterFlagEffect(id,RESETS_STANDARD_PHASE_END,0,2,fid)
 			--Send it to the GY during the next End Phase
 			local e1=Effect.CreateEffect(e:GetHandler())
 			e1:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)

@@ -6,7 +6,7 @@ function s.initial_effect(c)
 	alias=c:GetOriginalCodeRule()
 	--xyz summon
 	c:EnableReviveLimit()
-	Xyz.AddProcedure(c,nil,10,2,nil,nil,99)
+	Xyz.AddProcedure(c,nil,10,2,nil,nil,Xyz.InfiniteMats)
 	--Gain LP
 	local e1=Effect.CreateEffect(c)
 	e1:SetDescription(aux.Stringid(alias,0))
@@ -27,13 +27,13 @@ function s.initial_effect(c)
 	e2:SetRange(LOCATION_MZONE)
 	e2:SetCode(EVENT_PRE_DAMAGE_CALCULATE)
 	e2:SetCondition(s.btcon)
-	e2:SetCost(s.btcost)
+	e2:SetCost(Cost.DetachFromSelf(1))
 	e2:SetTarget(s.bttg)
 	e2:SetOperation(s.btop)
-	c:RegisterEffect(e2,false,REGISTER_FLAG_DETACH_XMAT)
+	c:RegisterEffect(e2)
 end
 function s.filter(c)
-	return c:IsSummonType(SUMMON_TYPE_SPECIAL) and c:HasNonZeroAttack()
+	return c:IsSpecialSummoned() and c:HasNonZeroAttack()
 end
 function s.target(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 	if chkc then return chkc:IsLocation(LOCATION_MZONE) and s.filter(chkc) end
@@ -77,10 +77,6 @@ function s.recop(e,tp,eg,ep,ev,re,r,rp)
 end
 function s.btcon(e,tp,eg,ep,ev,re,r,rp)
 	return Duel.GetBattleDamage(tp)>0 or Duel.GetBattleDamage(1-tp)>0
-end
-function s.btcost(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return e:GetHandler():CheckRemoveOverlayCard(tp,1,REASON_COST) end
-	e:GetHandler():RemoveOverlayCard(tp,1,1,REASON_COST)
 end
 function s.bttg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return e:GetHandler():GetFlagEffect(id)==0 end

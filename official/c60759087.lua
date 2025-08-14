@@ -1,22 +1,22 @@
---Evil★Twin Present
+--Ｅｖｉｌ★Ｔｗｉｎ プレゼント
 --Evil★Twin Present
 --Scripted by Naim
 local s,id=GetID()
 function s.initial_effect(c)
-	--Switch control
+	--Switch control of 1 "Ki-sikil" monster or 1 "Lil-la" monster you control and 1 face-up monster your opponent controls
 	local e1=Effect.CreateEffect(c)
 	e1:SetDescription(aux.Stringid(id,0))
 	e1:SetCategory(CATEGORY_CONTROL)
 	e1:SetProperty(EFFECT_FLAG_CARD_TARGET)
 	e1:SetType(EFFECT_TYPE_ACTIVATE)
 	e1:SetCode(EVENT_FREE_CHAIN)
-	e1:SetHintTiming(0,TIMING_MAIN_END+TIMING_END_PHASE)
+	e1:SetHintTiming(0,TIMING_MAIN_END|TIMING_END_PHASE)
 	e1:SetCountLimit(1,id,EFFECT_COUNT_CODE_OATH)
 	e1:SetCondition(s.condition)
 	e1:SetTarget(s.conttg)
 	e1:SetOperation(s.contop)
 	c:RegisterEffect(e1)
-	--Shuffle a set Spell/Trap into the Deck
+	--Shuffle 1 Set Spell/Trap into the Deck
 	local e2=e1:Clone()
 	e2:SetDescription(aux.Stringid(id,1))
 	e2:SetCategory(CATEGORY_TODECK)
@@ -24,13 +24,13 @@ function s.initial_effect(c)
 	e2:SetOperation(s.tdop)
 	c:RegisterEffect(e2)
 end
-s.listed_series={0x153,0x154}
+s.listed_series={SET_KI_SIKIL,SET_LIL_LA}
 function s.condition(e,tp,eg,ep,ev,re,r,rp)
 	local g=Duel.GetFieldGroup(tp,LOCATION_MZONE,0):Filter(Card.IsFaceup,nil)
-	return g:IsExists(Card.IsSetCard,1,nil,0x153) and g:IsExists(Card.IsSetCard,1,nil,0x154)
+	return g:IsExists(Card.IsSetCard,1,nil,SET_KI_SIKIL) and g:IsExists(Card.IsSetCard,1,nil,SET_LIL_LA)
 end
 function s.filter1(c)
-	return c:IsFaceup() and (c:IsSetCard(0x153) or c:IsSetCard(0x154)) and c:IsAbleToChangeControler()
+	return c:IsFaceup() and (c:IsSetCard(SET_KI_SIKIL) or c:IsSetCard(SET_LIL_LA)) and c:IsAbleToChangeControler()
 end
 function s.filter2(c)
 	return c:IsFaceup() and c:IsAbleToChangeControler()
@@ -69,7 +69,7 @@ function s.tdtg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 end
 function s.tdop(e,tp,eg,ep,ev,re,r,rp)
 	local tc=Duel.GetFirstTarget()
-	if tc and tc:IsRelateToEffect(e) then
-		Duel.SendtoDeck(tc,nil,2,REASON_EFFECT)
+	if tc:IsRelateToEffect(e) then
+		Duel.SendtoDeck(tc,nil,SEQ_DECKSHUFFLE,REASON_EFFECT)
 	end
 end

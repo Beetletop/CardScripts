@@ -1,5 +1,5 @@
 --厄災の星ティ・フォン
---Stellar Nemesis T-PHON - Doomsday Star
+--Super Starslayer TY-PHON - Sky Crisis
 --Scripted by Eerie Code
 local s,id=GetID()
 function s.initial_effect(c)
@@ -13,7 +13,7 @@ function s.initial_effect(c)
 	e1:SetCode(EFFECT_CANNOT_ACTIVATE)
 	e1:SetRange(LOCATION_MZONE)
 	e1:SetTargetRange(1,1)
-	e1:SetCondition(function(e) return e:GetHandler():IsSummonType(SUMMON_TYPE_XYZ) end)
+	e1:SetCondition(function(e) return e:GetHandler():IsXyzSummoned() end)
 	e1:SetValue(function(e,re,tp) return re:IsMonsterEffect() and re:GetHandler():IsAttackAbove(3000) end)
 	c:RegisterEffect(e1)
 	--Return 1 monster on the field to the hand
@@ -23,10 +23,10 @@ function s.initial_effect(c)
 	e2:SetType(EFFECT_TYPE_IGNITION)
 	e2:SetRange(LOCATION_MZONE)
 	e2:SetCountLimit(1)
-	e2:SetCost(aux.dxmcostgen(1,1,nil))
+	e2:SetCost(Cost.DetachFromSelf(1,1,nil))
 	e2:SetTarget(s.thtg)
 	e2:SetOperation(s.thop)
-	c:RegisterEffect(e2,false,REGISTER_FLAG_DETACH_XMAT)
+	c:RegisterEffect(e2)
 	--Register Special Summons from the Extra Deck
 	aux.GlobalCheck(s,function()
 		local ge1=Effect.CreateEffect(c)

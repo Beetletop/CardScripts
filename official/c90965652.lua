@@ -1,9 +1,9 @@
--- 二量合成
--- Dimer Synthesis
--- scripted by Hatter
+--二量合成
+--Dimer Synthesis
+--scripted by Hatter
 local s,id=GetID()
 function s.initial_effect(c)
-	-- Add to hand
+	--Add to hand
 	local e1=Effect.CreateEffect(c)
 	e1:SetDescription(aux.Stringid(id,0))
 	e1:SetCategory(CATEGORY_TOHAND+CATEGORY_SEARCH)
@@ -13,7 +13,7 @@ function s.initial_effect(c)
 	e1:SetTarget(s.thtg)
 	e1:SetOperation(s.thop)
 	c:RegisterEffect(e1)
-	-- Change ATK
+	--Change ATK
 	local e2=Effect.CreateEffect(c)
 	e2:SetDescription(aux.Stringid(id,1))
 	e2:SetCategory(CATEGORY_ATKCHANGE)
@@ -21,7 +21,7 @@ function s.initial_effect(c)
 	e2:SetProperty(EFFECT_FLAG_CARD_TARGET)
 	e2:SetRange(LOCATION_GRAVE)
 	e2:SetCountLimit(1,{id,1})
-	e2:SetCost(aux.bfgcost)
+	e2:SetCost(Cost.SelfBanish)
 	e2:SetTarget(s.atktg)
 	e2:SetOperation(s.atkop)
 	c:RegisterEffect(e2)
@@ -90,12 +90,12 @@ function s.atkop(e,tp,eg,ep,ev,re,r,rp)
 	local e1=Effect.CreateEffect(c)
 	e1:SetType(EFFECT_TYPE_SINGLE)
 	e1:SetCode(EFFECT_SET_ATTACK_FINAL)
-	e1:SetReset(RESET_EVENT|RESETS_STANDARD|RESET_PHASE|PHASE_END)
+	e1:SetReset(RESETS_STANDARD_PHASE_END)
 	e1:SetValue(0)
 	tc1:RegisterEffect(e1)
 	if not tc1:IsAttack(0) then return end
 	local tc2=(sg-tc1):GetFirst()
 	if not tc2 or tc2:IsImmuneToEffect(e) then return end
 	--Increase ATK
-	tc2:UpdateAttack(tc1:GetBaseAttack(),RESET_EVENT|RESETS_STANDARD|RESET_PHASE|PHASE_END,c)
+	tc2:UpdateAttack(tc1:GetBaseAttack(),RESETS_STANDARD_PHASE_END,c)
 end

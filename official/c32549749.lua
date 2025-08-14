@@ -3,7 +3,7 @@
 --scripted by Naim
 local s,id=GetID()
 function s.initial_effect(c)
-	-- Make a monster gain 800 ATK or Set or Equip a card from the GY
+	--Make a monster gain 800 ATK or Set or Equip a card from the GY
 	local e1=Effect.CreateEffect(c)
 	e1:SetDescription(aux.Stringid(id,0))
 	e1:SetType(EFFECT_TYPE_ACTIVATE)
@@ -24,7 +24,7 @@ function s.eqtfilter(c,ec,tp)
 end
 function s.target(e,tp,eg,ep,ev,re,r,rp,chk)
 	local phase=Duel.GetCurrentPhase()
-	local b1=Duel.IsExistingTarget(Card.IsFaceup,tp,LOCATION_MZONE,0,1,nil) and (phase~=PHASE_DAMAGE or not Duel.IsDamageCalculated())
+	local b1=Duel.IsExistingTarget(Card.IsFaceup,tp,LOCATION_MZONE,0,1,nil) and aux.StatChangeDamageStepCondition()
 	local ft=Duel.GetLocationCount(tp,LOCATION_SZONE)
 	if e:GetHandler():IsLocation(LOCATION_HAND) then ft=ft-1 end
 	local b2=ft>0 and Duel.IsExistingTarget(s.eqcfilter,tp,LOCATION_GRAVE,LOCATION_GRAVE,1,nil,tp) and phase~=PHASE_DAMAGE
@@ -50,7 +50,7 @@ function s.operation(e,tp,eg,ep,ev,re,r,rp)
 	if e:GetLabel()==1 then
 		local tc=Duel.GetFirstTarget()
 		if tc:IsFaceup() and tc:IsRelateToEffect(e) then
-			tc:UpdateAttack(800,RESET_EVENT|RESETS_STANDARD|RESET_PHASE|PHASE_END,e:GetHandler())
+			tc:UpdateAttack(800,RESETS_STANDARD_PHASE_END,e:GetHandler())
 		end
 	else
 		if Duel.GetLocationCount(tp,LOCATION_SZONE)==0 then return end

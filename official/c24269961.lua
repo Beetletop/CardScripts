@@ -1,5 +1,5 @@
 --破械神王ヤマ
---Unchained Soul King Yama
+--Unchained Soul Lord of Yama
 --scripted by Naim
 local s,id=GetID()
 function s.initial_effect(c)
@@ -27,7 +27,7 @@ function s.initial_effect(c)
 	e2:SetRange(LOCATION_GRAVE)
 	e2:SetCountLimit(1,{id,1})
 	e2:SetCondition(s.spcon)
-	e2:SetCost(aux.bfgcost)
+	e2:SetCost(Cost.SelfBanish)
 	e2:SetTarget(s.sptg)
 	e2:SetOperation(s.spop)
 	c:RegisterEffect(e2)

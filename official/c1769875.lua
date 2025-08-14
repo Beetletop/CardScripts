@@ -1,5 +1,5 @@
 --幻獣王キマイラ
---Chimera the Phantom Beast King
+--Chimera the King of Phantom Beasts
 --Scripted by Eerie Code
 local s,id=GetID()
 function s.initial_effect(c)
@@ -22,7 +22,7 @@ function s.initial_effect(c)
 	e2:SetProperty(EFFECT_FLAG_DELAY)
 	e2:SetCode(EVENT_SPSUMMON_SUCCESS)
 	e2:SetCountLimit(1,{id,0})
-	e2:SetCondition(function(e) return e:GetHandler():IsSummonType(SUMMON_TYPE_FUSION) end)
+	e2:SetCondition(function(e) return e:GetHandler():IsFusionSummoned() end)
 	e2:SetTarget(s.regtg)
 	e2:SetOperation(s.regop)
 	c:RegisterEffect(e2)
@@ -37,7 +37,7 @@ function s.initial_effect(c)
 	e3:SetHintTiming(0,TIMINGS_CHECK_MONSTER_E)
 	e3:SetCountLimit(1,{id,1})
 	e3:SetCondition(function(e,tp) return Duel.IsTurnPlayer(1-tp) end)
-	e3:SetCost(aux.bfgcost)
+	e3:SetCost(Cost.SelfBanish)
 	e3:SetTarget(s.sptg)
 	e3:SetOperation(s.spop)
 	c:RegisterEffect(e3)

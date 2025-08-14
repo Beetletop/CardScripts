@@ -1,5 +1,5 @@
 --ふわんだりぃずと謎の地図
---Flundereeze and the Mysterious Map
+--Floowandereeze and the Magnificent Map
 --Scripted by Zefile
 local s,id=GetID()
 function s.initial_effect(c)
@@ -8,8 +8,9 @@ function s.initial_effect(c)
 	e1:SetType(EFFECT_TYPE_ACTIVATE)
 	e1:SetCode(EVENT_FREE_CHAIN)
 	c:RegisterEffect(e1)
-	--Reveal
+	--Reveal 1 Level 1 "Floowandereeze" monster in your hand and banish 1 "Floowandereeze" card with a different name from your Deck then immediately after this effect resolves, Normal Summon the revealed monster
 	local e2=Effect.CreateEffect(c)
+	e2:SetDescription(aux.Stringid(id,0))
 	e2:SetCategory(CATEGORY_SUMMON+CATEGORY_REMOVE)
 	e2:SetType(EFFECT_TYPE_IGNITION)
 	e2:SetRange(LOCATION_FZONE)
@@ -17,8 +18,9 @@ function s.initial_effect(c)
 	e2:SetTarget(s.rmtg)
 	e2:SetOperation(s.rmop)
 	c:RegisterEffect(e2)
-	--Normal on normal
+	--Immediately after this effect resolves, Normal Summon 1 "Floowandereeze" monster
 	local e3=Effect.CreateEffect(c)
+	e3:SetDescription(aux.Stringid(id,1))
 	e3:SetCategory(CATEGORY_SUMMON)
 	e3:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_TRIGGER_O)
 	e3:SetCode(EVENT_SUMMON_SUCCESS)
@@ -30,20 +32,19 @@ function s.initial_effect(c)
 	e3:SetOperation(s.nsop)
 	c:RegisterEffect(e3)
 end
-s.listed_series={0x16f}
+s.listed_series={SET_FLOOWANDEREEZE}
 function s.filter(c,tp)
-	return c:IsSetCard(0x16f) and c:IsLevel(1) and c:IsSummonable(true,nil) and not c:IsPublic()
+	return c:IsSetCard(SET_FLOOWANDEREEZE) and c:IsLevel(1) and c:IsSummonable(true,nil) and not c:IsPublic()
 		and Duel.IsExistingMatchingCard(s.filter2,tp,LOCATION_DECK,0,1,nil,c:GetCode())
 end
 function s.filter2(c,code)
-	return c:IsSetCard(0x16f) and c:IsAbleToRemove() and not c:IsCode(code)
+	return c:IsSetCard(SET_FLOOWANDEREEZE) and c:IsAbleToRemove() and not c:IsCode(code)
 end
 function s.rmtg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.IsExistingMatchingCard(s.filter,tp,LOCATION_HAND,0,1,nil,tp) end
-	Duel.SetOperationInfo(0,CATEGORY_REMOVE,POS_FACEUP,1,tp,LOCATION_DECK)
+	Duel.SetOperationInfo(0,CATEGORY_REMOVE,nil,1,tp,LOCATION_DECK)
 end
 function s.rmop(e,tp,eg,ep,ev,re,r,rp)
-	if not e:GetHandler():IsRelateToEffect(e) then return end
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_CONFIRM)
 	local g1=Duel.SelectMatchingCard(tp,s.filter,tp,LOCATION_HAND,0,1,1,nil,tp)
 	if #g1>0 then
@@ -61,15 +62,15 @@ function s.nscon(e,tp,eg,ep,ev,re,r,rp)
 	return eg and ep==1-tp
 end
 function s.nsfilter(c)
-	return c:IsSetCard(0x16f) and c:IsSummonable(true,nil)
+	return c:IsSetCard(SET_FLOOWANDEREEZE) and c:IsSummonable(true,nil)
 end
 function s.nstg(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return Duel.IsExistingMatchingCard(s.nsfilter,tp,LOCATION_HAND+LOCATION_MZONE,0,1,nil) end
+	if chk==0 then return Duel.IsExistingMatchingCard(s.nsfilter,tp,LOCATION_HAND|LOCATION_MZONE,0,1,nil) end
 	Duel.SetOperationInfo(0,CATEGORY_SUMMON,nil,1,0,0)
 end
 function s.nsop(e,tp,eg,ep,ev,re,r,rp)
-	if not e:GetHandler():IsRelateToEffect(e) then return end
-	local g=Duel.SelectMatchingCard(tp,s.nsfilter,tp,LOCATION_HAND+LOCATION_MZONE,0,1,1,nil)
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SUMMON)
+	local g=Duel.SelectMatchingCard(tp,s.nsfilter,tp,LOCATION_HAND|LOCATION_MZONE,0,1,1,nil)
 	if #g>0 then
 		local sg=g:GetFirst(tp,1,1,nil)
 		Duel.Summon(tp,sg,true,nil)

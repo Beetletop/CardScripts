@@ -11,10 +11,10 @@ function s.initial_effect(c)
 	e1:SetType(EFFECT_TYPE_IGNITION)
 	e1:SetCountLimit(1)
 	e1:SetRange(LOCATION_MZONE)
-	e1:SetCost(s.ctcost)
+	e1:SetCost(Cost.DetachFromSelf(1))
 	e1:SetTarget(s.cttg)
 	e1:SetOperation(s.ctop)
-	c:RegisterEffect(e1,false,REGISTER_FLAG_DETACH_XMAT)
+	c:RegisterEffect(e1)
 	--destroy & damage
 	local e2=Effect.CreateEffect(c)
 	e2:SetDescription(aux.Stringid(75433814,1))
@@ -34,10 +34,6 @@ function s.initial_effect(c)
 	c:RegisterEffect(e3)
 end
 s.xyz_number=40
-function s.ctcost(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return e:GetHandler():CheckRemoveOverlayCard(tp,1,REASON_COST) end
-	e:GetHandler():RemoveOverlayCard(tp,1,1,REASON_COST)
-end
 function s.cttg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.IsExistingMatchingCard(Card.IsFaceup,tp,LOCATION_MZONE,LOCATION_MZONE,1,e:GetHandler()) end
 end
@@ -48,7 +44,7 @@ function s.ctop(e,tp,eg,ep,ev,re,r,rp)
 		tc:AddCounter(0x1024,1)
 		tc=g:GetNext()
 	end
-	Duel.RegisterFlagEffect(tp,id,RESET_PHASE+PHASE_END,0,2)
+	Duel.RegisterFlagEffect(tp,id,RESET_PHASE|PHASE_END,0,2)
 end
 function s.descon(e,tp,eg,ep,ev,re,r,rp)
 	return Duel.GetFlagEffect(tp,id)~=0 and Duel.GetTurnPlayer()~=tp
@@ -83,5 +79,5 @@ function s.desop(e,tp,eg,ep,ev,re,r,rp)
 	Duel.Damage(1-tp,dam2,REASON_EFFECT)
 end
 function s.indes(e,c)
-	return not c:IsSetCard(0x48)
+	return not c:IsSetCard(SET_NUMBER)
 end

@@ -1,4 +1,5 @@
 --グレンザウルス
+--Grenosaurus
 local s,id=GetID()
 function s.initial_effect(c)
 	--xyz summon
@@ -11,19 +12,15 @@ function s.initial_effect(c)
 	e1:SetCode(EVENT_BATTLE_DESTROYING)
 	e1:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
 	e1:SetCondition(s.damcon)
-	e1:SetCost(s.damcost)
+	e1:SetCost(Cost.DetachFromSelf(1))
 	e1:SetTarget(s.damtg)
 	e1:SetOperation(s.damop)
-	c:RegisterEffect(e1,false,REGISTER_FLAG_DETACH_XMAT)
+	c:RegisterEffect(e1)
 end
 function s.damcon(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	local bc=c:GetBattleTarget()
 	return c:IsRelateToBattle() and bc:IsLocation(LOCATION_GRAVE) and bc:IsMonster()
-end
-function s.damcost(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return e:GetHandler():CheckRemoveOverlayCard(tp,1,REASON_COST) end
-	e:GetHandler():RemoveOverlayCard(tp,1,1,REASON_COST)
 end
 function s.damtg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return true end

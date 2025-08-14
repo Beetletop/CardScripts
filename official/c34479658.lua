@@ -23,7 +23,6 @@ function s.initial_effect(c)
 	e2:SetValue(s.valcheck)
 	c:RegisterEffect(e2)
 	e2:SetLabelObject(e1)
-	e2:SetLabelObject(e1)
 	--Add to hand
 	local e3=Effect.CreateEffect(c)
 	e3:SetDescription(aux.Stringid(id,2))
@@ -36,7 +35,7 @@ function s.initial_effect(c)
 	e3:SetOperation(s.thop)
 	c:RegisterEffect(e3)
 end
-s.listed_names={34479659}
+s.listed_names={34479659} --"Alligator Token"
 function s.otfilter(c)
 	return c:IsRace(RACE_REPTILE)
 end
@@ -47,7 +46,7 @@ function s.valcheck(e,c)
 	e:GetLabelObject():SetLabel(ct)
 end
 function s.spcond(e,tp,eg,ep,ev,re,r,rp)
-	return e:GetHandler():IsSummonType(SUMMON_TYPE_TRIBUTE)
+	return e:GetHandler():IsTributeSummoned()
 end
 function s.sptg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0 and e:GetLabel()>0
@@ -67,7 +66,7 @@ function s.spop(e,tp,eg,ep,ev,re,r,rp)
 end
 function s.thcond(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	return c:IsPreviousLocation(LOCATION_MZONE) and c:IsSummonType(SUMMON_TYPE_TRIBUTE) and (c:IsReason(REASON_BATTLE) or rp==1-tp)
+	return c:IsPreviousLocation(LOCATION_MZONE) and c:IsTributeSummoned() and (c:IsReason(REASON_BATTLE) or rp==1-tp)
 end
 function s.thfilter(c)
 	return c:IsRace(RACE_REPTILE) and c:IsAbleToHand() and not c:IsCode(id)

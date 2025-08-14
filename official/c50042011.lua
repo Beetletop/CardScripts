@@ -1,5 +1,5 @@
 --メメント・スリーピィ
---Mementotlan Mystical Sheep
+--Mementotlan Shleepy
 --Scripted by Hatter
 local s,id=GetID()
 function s.initial_effect(c)
@@ -11,7 +11,7 @@ function s.initial_effect(c)
 	e1:SetCode(EVENT_FREE_CHAIN)
 	e1:SetRange(LOCATION_HAND)
 	e1:SetCountLimit(1,id)
-	e1:SetHintTiming(0,TIMINGS_CHECK_MONSTER_E+TIMING_MAIN_END)
+	e1:SetHintTiming(0,TIMINGS_CHECK_MONSTER_E|TIMING_MAIN_END)
 	e1:SetCondition(function(e,tp) return Duel.HasFlagEffect(tp,id) end)
 	e1:SetTarget(s.sptg)
 	e1:SetOperation(s.spop)
@@ -24,6 +24,7 @@ function s.initial_effect(c)
 	e2:SetProperty(EFFECT_FLAG_DELAY)
 	e2:SetCode(EVENT_SUMMON_SUCCESS)
 	e2:SetCountLimit(1,{id,1})
+	e2:SetCondition(function() return not Duel.IsPhase(PHASE_DAMAGE) end)
 	e2:SetTarget(Fusion.SummonEffTG(aux.FilterBoolFunction(Card.IsSetCard,SET_MEMENTO)))
 	e2:SetOperation(Fusion.SummonEffOP(aux.FilterBoolFunction(Card.IsSetCard,SET_MEMENTO)))
 	c:RegisterEffect(e2)

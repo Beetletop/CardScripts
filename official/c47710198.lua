@@ -1,5 +1,5 @@
--- 相剣大邪－七星龍淵
--- Swordsoul Sinister Sovereign - Qixing Longyuan
+--相剣大邪－七星龍淵
+--Swordsoul Sinister Sovereign - Qixing Longyuan
 local s,id=GetID()
 function s.initial_effect(c)
 	c:EnableReviveLimit()
@@ -57,7 +57,7 @@ function s.initial_effect(c)
 	c:RegisterEffect(e3)
 end
 function s.cfilter(c,e,tp)
-	return c:IsFaceup() and c:IsType(TYPE_SYNCHRO) and c:IsSummonType(SUMMON_TYPE_SYNCHRO)
+	return c:IsFaceup() and c:IsType(TYPE_SYNCHRO) and c:IsSynchroSummoned()
 		and c:IsRace(RACE_WYRM) and c:IsSummonPlayer(tp)
 end
 function s.drcon(e,tp,eg,ep,ev,re,r,rp)
@@ -115,7 +115,7 @@ function s.rmcon2(e,tp,eg,ep,ev,re,r,rp)
 end
 function s.rmtg2(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return re:GetHandler():IsAbleToRemove() end
-	Duel.SetOperationInfo(0,CATEGORY_REMOVE,rg,1,0,0)
+	Duel.SetOperationInfo(0,CATEGORY_REMOVE,re:GetHandler(),1,0,0)
 	Duel.SetOperationInfo(0,CATEGORY_DAMAGE,nil,0,1-tp,1200)
 end
 function s.rmop2(e,tp,eg,ep,ev,re,r,rp)

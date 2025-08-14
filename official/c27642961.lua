@@ -1,13 +1,14 @@
+--ＳＰＹＲＡＬ ＭＩＳＳＩＯＮ－強襲
 --SPYRAL MISSION - Assault
 local s,id=GetID()
 function s.initial_effect(c)
-	--activate
+	--Activate
 	local e1=Effect.CreateEffect(c)
 	e1:SetType(EFFECT_TYPE_ACTIVATE)
 	e1:SetCode(EVENT_FREE_CHAIN)
 	e1:SetTarget(s.target)
 	c:RegisterEffect(e1)
-	--draw
+	--Draw 1 card
 	local e2=Effect.CreateEffect(c)
 	e2:SetDescription(aux.Stringid(id,0))
 	e2:SetCategory(CATEGORY_DRAW)
@@ -20,22 +21,22 @@ function s.initial_effect(c)
 	e2:SetTarget(s.drtg)
 	e2:SetOperation(s.drop)
 	c:RegisterEffect(e2)
-	--spsummon
+	-- Special Summon 1 "SPYRAL" monster from your hand
 	local e3=Effect.CreateEffect(c)
 	e3:SetDescription(aux.Stringid(id,1))
 	e3:SetCategory(CATEGORY_SPECIAL_SUMMON)
 	e3:SetType(EFFECT_TYPE_IGNITION)
 	e3:SetRange(LOCATION_GRAVE)
-	e3:SetCost(aux.bfgcost)
+	e3:SetCost(Cost.SelfBanish)
 	e3:SetTarget(s.sptg)
 	e3:SetOperation(s.spop)
 	c:RegisterEffect(e3)
 end
-s.listed_series={0xee}
+s.listed_series={SET_SPYRAL}
 function s.target(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return true end
 	local c=e:GetHandler()
-	--destroy
+	--Destroy this card during your 3rd End Phase after activation
 	local e1=Effect.CreateEffect(c)
 	e1:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
 	e1:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
@@ -44,12 +45,12 @@ function s.target(e,tp,eg,ep,ev,re,r,rp,chk)
 	e1:SetRange(LOCATION_SZONE)
 	e1:SetCondition(s.descon)
 	e1:SetOperation(s.desop)
-	e1:SetReset(RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_END+RESET_SELF_TURN,3)
+	e1:SetReset(RESETS_STANDARD_PHASE_END|RESET_SELF_TURN,3)
 	c:SetTurnCounter(0)
 	c:RegisterEffect(e1)
 end
 function s.descon(e,tp,eg,ep,ev,re,r,rp)
-	return Duel.GetTurnPlayer()==tp
+	return Duel.IsTurnPlayer(tp)
 end
 function s.desop(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
@@ -67,11 +68,11 @@ function s.drcon(e,tp,eg,ep,ev,re,r,rp)
 	local des=eg:GetFirst()
 	if des:IsReason(REASON_BATTLE) then
 		local rc=des:GetReasonCard()
-		return rc and rc:IsSetCard(0xee) and rc:IsControler(tp) and rc:IsRelateToBattle()
+		return rc and rc:IsSetCard(SET_SPYRAL) and rc:IsControler(tp) and rc:IsRelateToBattle()
 	elseif re then
 		local rc=re:GetHandler()
 		return eg:IsExists(s.cfilter,1,nil,tp)
-			and rc and rc:IsSetCard(0xee) and rc:IsControler(tp) and re:IsActiveType(TYPE_MONSTER)
+			and rc and rc:IsSetCard(SET_SPYRAL) and rc:IsControler(tp) and re:IsMonsterEffect()
 	end
 	return false
 end
@@ -86,7 +87,7 @@ function s.drop(e,tp,eg,ep,ev,re,r,rp)
 	Duel.Draw(p,d,REASON_EFFECT)
 end
 function s.spfilter(c,e,tp)
-	return c:IsSetCard(0xee) and c:IsCanBeSpecialSummoned(e,0,tp,false,false)
+	return c:IsSetCard(SET_SPYRAL) and c:IsCanBeSpecialSummoned(e,0,tp,false,false)
 end
 function s.sptg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0

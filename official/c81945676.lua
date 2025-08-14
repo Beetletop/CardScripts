@@ -1,9 +1,9 @@
--- メメント・メイス
--- Mementotlan Mace
--- Scripted by Satellaa
+--メメント・メイス
+--Mementotlan Mace
+--Scripted by Satellaa
 local s,id=GetID()
 function s.initial_effect(c)
-	-- Take control of 1 face-up monster your opponent controls
+	--Take control of 1 face-up monster your opponent controls
 	local e1=Effect.CreateEffect(c)
 	e1:SetDescription(aux.Stringid(id,0))
 	e1:SetCategory(CATEGORY_CONTROL)
@@ -14,11 +14,11 @@ function s.initial_effect(c)
 	e1:SetCountLimit(1,id)
 	e1:SetHintTiming(0,TIMINGS_CHECK_MONSTER|TIMING_MAIN_END)
 	e1:SetCondition(s.ctcon)
-	e1:SetCost(s.ctcost)
+	e1:SetCost(Cost.SelfDiscard)
 	e1:SetTarget(s.cttg)
 	e1:SetOperation(s.ctop)
 	c:RegisterEffect(e1)
-	-- Add 1 "Memento" card from your Deck to your hand
+	--Add 1 "Memento" card from your Deck to your hand
 	local e2=Effect.CreateEffect(c)
 	e2:SetDescription(aux.Stringid(id,1))
 	e2:SetCategory(CATEGORY_DESTROY+CATEGORY_TOHAND+CATEGORY_SEARCH)
@@ -34,11 +34,6 @@ s.listed_names={CARD_MEMENTOAL_TECUHTLICA,id}
 function s.ctcon(e,tp,eg,ep,ev,re,r,rp)
 	return Duel.IsMainPhase() and Duel.IsTurnPlayer(1-tp)
 		and Duel.IsExistingMatchingCard(aux.FaceupFilter(Card.IsCode,CARD_MEMENTOAL_TECUHTLICA),tp,LOCATION_ONFIELD,0,1,nil)
-end
-function s.ctcost(e,tp,eg,ep,ev,re,r,rp,chk)
-	local c=e:GetHandler()
-	if chk==0 then return c:IsDiscardable() end
-	Duel.SendtoGrave(c,REASON_COST|REASON_DISCARD)
 end
 function s.cttg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 	if chkc then return chkc:IsLocation(LOCATION_MZONE) and chkc:IsControler(1-tp) and chkc:IsFaceup() and chkc:IsControlerCanBeChanged() end

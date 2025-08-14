@@ -3,7 +3,7 @@
 --Scripted by Eerie Code
 local s,id=GetID()
 function s.initial_effect(c)
-	-- Can be tribute Summoned using 1 "Magical Musket" monster
+	--Can be tribute Summoned using 1 "Magical Musket" monster
 	local e1=aux.AddNormalSummonProcedure(c,true,true,1,1,SUMMON_TYPE_TRIBUTE,aux.Stringid(id,0),s.otfilter)
 	--"Magical Musket" Spell/Traps can be activated from the hand
 	local e2=Effect.CreateEffect(c)
@@ -42,7 +42,7 @@ function s.initial_effect(c)
 	e6:SetOperation(s.regop2)
 	c:RegisterEffect(e6)
 	local e7=e6:Clone()
-	e7:SetCode(EVENT_PHASE_START+PHASE_DRAW)
+	e7:SetCode(EVENT_PHASE_START|PHASE_DRAW)
 	e7:SetOperation(s.clearop)
 	c:RegisterEffect(e7)
 	local e8=e6:Clone()

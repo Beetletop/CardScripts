@@ -58,15 +58,15 @@ function s.initial_effect(c)
 	e7:SetCode(EVENT_BE_BATTLE_TARGET)
 	e7:SetRange(LOCATION_MZONE)
 	e7:SetCondition(s.nacon)
-	e7:SetCost(s.nacost)
+	e7:SetCost(Cost.DetachFromSelf(1))
 	e7:SetTarget(s.natg)
 	e7:SetOperation(s.naop)
-	c:RegisterEffect(e7,false,REGISTER_FLAG_DETACH_XMAT)
+	c:RegisterEffect(e7)
 	--number generic effect
 	local e8=Effect.CreateEffect(c)
 	e8:SetType(EFFECT_TYPE_SINGLE)
 	e8:SetCode(EFFECT_INDESTRUCTABLE_BATTLE)
-	e8:SetValue(aux.NOT(aux.TargetBoolFunction(Card.IsSetCard,0x48)))
+	e8:SetValue(aux.NOT(aux.TargetBoolFunction(Card.IsSetCard,SET_NUMBER)))
 	c:RegisterEffect(e8)
 	aux.GlobalCheck(s,function()
 		local ge1=Effect.CreateEffect(c)
@@ -82,8 +82,8 @@ s.listed_series={0x48}
 s.listed_names={89477759}
 s.xyz_number=1000
 function s.check(e,tp,eg,ep,ev,re,r,rp)
-	if Duel.GetTurnPlayer()==tp or Duel.GetFlagEffect(tp,id)~=0 then return end
-	Duel.RegisterFlagEffect(tp,id,RESET_PHASE+PHASE_END,0,1)
+	if Duel.IsTurnPlayer(tp) or Duel.GetFlagEffect(tp,id)~=0 then return end
+	Duel.RegisterFlagEffect(tp,id,RESET_PHASE|PHASE_END,0,1)
 end
 function s.cfilter(c,e,tp,xyz)
 	return c:IsCode(89477759) and c:IsPreviousControler(tp) and c:IsReason(REASON_DESTROY)
@@ -115,7 +115,7 @@ function s.spop(e,tp,eg,ep,ev,re,r,rp)
 	end
 end
 function s.wincon(e,tp,eg,ep,ev,re,r,rp)
-	return Duel.GetTurnPlayer()==1-tp and Duel.GetFlagEffect(tp,id)==0
+	return Duel.IsTurnPlayer(1-tp) and Duel.GetFlagEffect(tp,id)==0
 end
 function s.winop(e,tp,eg,ep,ev,re,r,rp)
 	Duel.Win(tp,WIN_REASON_NUMBER_iC1000)
@@ -123,10 +123,6 @@ end
 function s.nacon(e,tp,eg,ep,ev,re,r,rp)
 	local d=Duel.GetAttackTarget()
 	return d and d:IsControler(tp)
-end
-function s.nacost(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return e:GetHandler():CheckRemoveOverlayCard(tp,1,REASON_COST) end
-	e:GetHandler():RemoveOverlayCard(tp,1,1,REASON_COST)
 end
 function s.natg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.GetAttacker():IsOnField() end

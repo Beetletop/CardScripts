@@ -4,9 +4,9 @@
 local s,id=GetID()
 function s.initial_effect(c)
 	c:EnableReviveLimit()
-	--Pendulum procedure
+	--Pendulum Summon procedure
 	Pendulum.AddProcedure(c,false)
-	--Synchro Summon procedure
+	--Synchro Summon procedure: 1 Tuner + 1+ non-Tuner DARK Pendulum Monsters
 	Synchro.AddProcedure(c,nil,1,1,Synchro.NonTunerEx(s.matfilter),1,99)
 	--Special Summon this card from the Pendulum Zone
 	local e1=Effect.CreateEffect(c)
@@ -74,9 +74,6 @@ function s.selfspop(e,tp,eg,ep,ev,re,r,rp)
 		Duel.SpecialSummon(c,0,tp,tp,false,false,POS_FACEUP)
 	end
 end
-function s.spfilter(c,e,tp)
-	return c:IsSetCard(SET_SUPREME_KING_DRAGON) and c:IsCanBeSpecialSummoned(e,0,tp,false,false,POS_FACEUP_DEFENSE)
-end
 function s.spcon(e,tp,eg,ep,ev,re,r,rp)
 	local bc=e:GetHandler():GetBattleTarget()
 	local ex,_,damp=Duel.CheckEvent(EVENT_BATTLE_DAMAGE,true)
@@ -131,8 +128,8 @@ function s.spop(e,tp,eg,ep,ev,re,r,rp)
 		ft4=math.min(ect,ft4)
 	end
 	local loc=0
-	if ft1>0 then loc=loc+LOCATION_DECK+LOCATION_GRAVE end
-	if ft2>0 or ft3>0 or ft4>0 then loc=loc+LOCATION_EXTRA end
+	if ft1>0 then loc=loc|LOCATION_DECK|LOCATION_GRAVE end
+	if ft2>0 or ft3>0 or ft4>0 then loc=loc|LOCATION_EXTRA end
 	if loc==0 then return end
 	local sg=Duel.GetMatchingGroup(aux.NecroValleyFilter(s.spfilter),tp,loc,0,nil,e,tp)
 	if #sg==0 then return end

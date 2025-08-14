@@ -1,5 +1,5 @@
 --怒小児様
---Tantrum-Throwing Tyke
+--Tantrum Toddler
 --scripted by Naim
 local s,id=GetID()
 function s.initial_effect(c)
@@ -48,10 +48,10 @@ function s.initial_effect(c)
 	e6:SetRange(LOCATION_MZONE)
 	e6:SetHintTiming(0,TIMINGS_CHECK_MONSTER_E)
 	e6:SetCondition(function(e) return e:GetHandler():GetOverlayCount()>=8 end)
-	e6:SetCost(aux.dxmcostgen(4,4,nil))
+	e6:SetCost(Cost.DetachFromSelf(4,4,nil))
 	e6:SetTarget(s.destg)
 	e6:SetOperation(s.desop)
-	c:RegisterEffect(e6,false,REGISTER_FLAG_DETACH_XMAT)
+	c:RegisterEffect(e6)
 end
 function s.atchtg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return e:GetHandler():IsType(TYPE_XYZ) and Duel.GetFieldGroupCount(0,LOCATION_GRAVE,LOCATION_GRAVE)>0 end

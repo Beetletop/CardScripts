@@ -1,5 +1,5 @@
 --幻奏の華歌神フラワリング・エトワール
---Flowering Etoile the Melodious Grand Choir
+--Flowering Etoile the Melodious Magnificat
 --Scripted by Larry126
 local s,id=GetID()
 function s.initial_effect(c)
@@ -59,7 +59,7 @@ end
 function s.spcon(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	return c:IsPreviousLocation(LOCATION_MZONE) and c:IsPreviousPosition(POS_FACEUP)
-		and c:IsPreviousControler(tp) and c:IsSummonType(SUMMON_TYPE_FUSION) and rp==1-tp
+		and c:IsPreviousControler(tp) and c:IsFusionSummoned() and rp==1-tp
 end
 function s.spfilter(c,e,tp)
 	if c:IsLocation(LOCATION_DECK) and Duel.GetLocationCount(tp,LOCATION_MZONE)<=0 then return false end

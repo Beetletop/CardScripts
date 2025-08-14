@@ -1,5 +1,5 @@
 --魔鍵憑神－アシュタルトゥ
---Magikey Avatar - Astartu
+--Magikey Deity - Ashtartu
 --Scripted by Eerie Code
 local s,id=GetID()
 function s.initial_effect(c)
@@ -16,10 +16,10 @@ function s.initial_effect(c)
 	e1:SetRange(LOCATION_MZONE)
 	e1:SetCountLimit(1)
 	e1:SetCondition(s.damcon)
-	e1:SetCost(aux.dxmcostgen(1,1,nil))
+	e1:SetCost(Cost.DetachFromSelf(1,1,nil))
 	e1:SetTarget(s.damtg)
 	e1:SetOperation(s.damop)
-	c:RegisterEffect(e1,false,REGISTER_FLAG_DETACH_XMAT)
+	c:RegisterEffect(e1)
 	--Detach 1 material and banish
 	local e2=Effect.CreateEffect(c)
 	e2:SetDescription(aux.Stringid(id,1))

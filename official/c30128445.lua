@@ -1,10 +1,10 @@
 --超越竜ドリルグナトゥス
---Transcendrake Drillgnathus
+--Transcendosaurus Drillygnathus
 --scripted by Naim
 local s,id=GetID()
 function s.initial_effect(c)
 	c:EnableReviveLimit()
-	-- Xyz Summon procedure
+	--Xyz Summon procedure
 	Xyz.AddProcedure(c,nil,6,2)
 	--Double damage when it doesn't have Xyz materials
 	local e1=Effect.CreateEffect(c)
@@ -21,10 +21,10 @@ function s.initial_effect(c)
 	e2:SetProperty(EFFECT_FLAG_CARD_TARGET)
 	e2:SetRange(LOCATION_MZONE)
 	e2:SetCountLimit(1,id)
-	e2:SetCost(aux.dxmcostgen(1,1,nil))
+	e2:SetCost(Cost.DetachFromSelf(1,1,nil))
 	e2:SetTarget(s.sptg)
 	e2:SetOperation(s.spop)
-	c:RegisterEffect(e2,false,REGISTER_FLAG_DETACH_XMAT)
+	c:RegisterEffect(e2)
 	--Shuffle 1 Normal Monster from your GY into the Deck and Special Summon this card
 	local e3=Effect.CreateEffect(c)
 	e3:SetDescription(aux.Stringid(id,1))

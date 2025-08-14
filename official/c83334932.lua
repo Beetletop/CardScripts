@@ -1,9 +1,9 @@
--- 超重武者バイ－Ｑ
--- Superheavy Samurai Bike
--- Scripted by Satella
+--超重武者バイ－Ｑ
+--Superheavy Samurai Motorbike
+--Scripted by Satella
 local s,id=GetID()
 function s.initial_effect(c)
-	-- Add 1 "Superheavy Samurai" from the Deck to the hand
+	--Add 1 "Superheavy Samurai" from the Deck to the hand
 	local e1=Effect.CreateEffect(c)
 	e1:SetDescription(aux.Stringid(id,0))
 	e1:SetCategory(CATEGORY_TOHAND+CATEGORY_SEARCH)
@@ -11,11 +11,11 @@ function s.initial_effect(c)
 	e1:SetRange(LOCATION_HAND)
 	e1:SetCountLimit(1,id)
 	e1:SetCondition(s.thcon)
-	e1:SetCost(s.thcost)
+	e1:SetCost(Cost.SelfDiscard)
 	e1:SetTarget(s.thtg)
 	e1:SetOperation(s.thop)
 	c:RegisterEffect(e1)
-	-- Increase the level of a Machine monster by 2
+	--Increase the level of a Machine monster by 2
 	local e2=Effect.CreateEffect(c)
 	e2:SetDescription(aux.Stringid(id,1))
 	e2:SetCategory(CATEGORY_LVCHANGE)
@@ -31,11 +31,6 @@ s.listed_series={SET_SUPERHEAVY_SAMURAI}
 s.listed_names={id}
 function s.thcon(e,tp,eg,ep,ev,re,r,rp)
 	return not Duel.IsExistingMatchingCard(Card.IsSpellTrap,tp,LOCATION_GRAVE,0,1,nil)
-end
-function s.thcost(e,tp,eg,ep,ev,re,r,rp,chk)
-	local c=e:GetHandler()
-	if chk==0 then return c:IsDiscardable() end
-	Duel.SendtoGrave(c,REASON_COST+REASON_DISCARD)
 end
 function s.thfilter(c)
 	return c:IsSetCard(SET_SUPERHEAVY_SAMURAI) and c:IsMonster() and not c:IsCode(id) and c:IsAbleToHand()
@@ -65,7 +60,7 @@ end
 function s.lvop(e,tp,eg,ep,ev,re,r,rp)
 	local tc=Duel.GetFirstTarget()
 	if tc:IsFaceup() and tc:IsRelateToEffect(e) then
-		-- Increase its Level by 2
+		--Increase its Level by 2
 		local e1=Effect.CreateEffect(e:GetHandler())
 		e1:SetType(EFFECT_TYPE_SINGLE)
 		e1:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)

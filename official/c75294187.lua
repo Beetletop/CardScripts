@@ -1,9 +1,9 @@
--- 狂惑の落とし穴
--- Delusion Trap Hole
--- Scripted by Hatter
+--狂惑の落とし穴
+--Terrifying Trap Hole Nightmare
+--Scripted by Hatter
 local s,id=GetID()
 function s.initial_effect(c)
-	-- Destroy 1 monster with 2000 or more ATK
+	--Destroy 1 monster with 2000 or more ATK
 	local e1=Effect.CreateEffect(c)
 	e1:SetCategory(aux.Stringid(id,0))
 	e1:SetCategory(CATEGORY_DESTROY+CATEGORY_REMOVE)
@@ -27,7 +27,7 @@ function s.destg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 	Duel.SetPossibleOperationInfo(0,CATEGORY_REMOVE,nil,1,1-tp,LOCATION_MZONE|LOCATION_GRAVE)
 end
 function s.hlfilter(c)
-	return c:IsNormalTrap() and (c:IsSetCard(SET_HOLE) or c:IsSetCard(SET_TRAP_HOLE))
+	return c:IsNormalTrap() and c:IsSetCard({SET_HOLE,SET_TRAP_HOLE})
 end
 function s.rmfilter(c)
 	return c:IsMonster() and c:IsAbleToRemove() and aux.SpElimFilter(c)

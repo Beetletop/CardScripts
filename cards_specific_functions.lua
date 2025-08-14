@@ -38,12 +38,7 @@ end
 
 --return if Card c was special summoned by the effect of a "Nouvelles" monster
 function Card.IsNouvellesSummoned(c)
-	return c:IsSummonType(SUMMON_BY_NOUVELLES)
-end
-
---sp_summon condition for "Nouvellez" monsters
-function Auxiliary.nouvspcon(e,tp,eg,ep,ev,re,r,rp)
-	return e:GetHandler():IsNouvellesSummoned()
+	return c:HasFlagEffect(c:GetOriginalCode())
 end
 
 --check for Spirit Elimination
@@ -329,6 +324,27 @@ end
 function Auxiliary.EvilHeroLimit(e,se,sp,st)
 	return se:GetHandler():IsCode(CARD_DARK_FUSION) or (Duel.IsPlayerAffectedByEffect(e:GetHandlerPlayer(),SKILL_DARK_UNITY) and se:GetHandler():IsCode(CARD_SUPER_POLYMERIZATION))
 		or (Duel.IsPlayerAffectedByEffect(e:GetHandlerPlayer(),EFFECT_SUPREME_CASTLE) and st&SUMMON_TYPE_FUSION==SUMMON_TYPE_FUSION)
+end
+
+function Card.AddMustBeSpecialSummonedByDarkFusion(c)
+	local metatable=Duel.GetMetatable(c:GetOriginalCode())
+	metatable.dark_calling=true
+	--Must be Special Summoned with "Dark Fusion"
+	local e0=Effect.CreateEffect(c)
+	e0:SetType(EFFECT_TYPE_SINGLE)
+	e0:SetProperty(EFFECT_FLAG_CANNOT_DISABLE+EFFECT_FLAG_UNCOPYABLE)
+	e0:SetCode(EFFECT_SPSUMMON_CONDITION)
+	e0:SetValue(aux.EvilHeroLimit)
+	c:RegisterEffect(e0)
+	--"Clock Lizard" check
+	local e1=Effect.CreateEffect(c)
+	e1:SetType(EFFECT_TYPE_SINGLE)
+	e1:SetProperty(EFFECT_FLAG_CANNOT_DISABLE+EFFECT_FLAG_UNCOPYABLE)
+	e1:SetCode(CARD_CLOCK_LIZARD)
+	e1:SetCondition(function(e) return not Duel.IsPlayerAffectedByEffect(e:GetHandlerPlayer(),EFFECT_SUPREME_CASTLE) end)
+	e1:SetValue(1)
+	c:RegisterEffect(e1)
+	return e0
 end
 --Special Summon limit for "Fossil" Fusion monsters
 function Auxiliary.FossilLimit(e,se,sp,st)
@@ -850,32 +866,33 @@ end
 Drytron={}
 function Drytron.TributeCostFilter(c,tp)
 	return ((c:IsSetCard(SET_DRYTRON) and c:IsMonster()) or c:IsRitualMonster()) and (c:IsControler(tp) or c:IsFaceup())
-		and (c:IsInMainMZone(tp) or Duel.GetLocationCount(tp,LOCATION_MZONE)>0)
+		and Duel.GetMZoneCount(tp,c)>0
 end
 function Drytron.TributeBaseCost(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return Duel.CheckReleaseGroupCost(tp,Drytron.TributeCostFilter,1,true,nil,e:GetHandler(),tp) end
-	local sg=Duel.SelectReleaseGroupCost(tp,Drytron.TributeCostFilter,1,1,true,nil,e:GetHandler(),tp)
+	local c=e:GetHandler()
+	if chk==0 then return Duel.CheckReleaseGroupCost(tp,Drytron.TributeCostFilter,1,true,nil,c,tp) end
+	local sg=Duel.SelectReleaseGroupCost(tp,Drytron.TributeCostFilter,1,1,true,nil,c,tp)
 	Duel.Release(sg,REASON_COST)
+end
+function Drytron.ExtraCon(base,e,tp,eg,ep,ev,re,r,rp)
+	return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
 end
 function Drytron.TributeExtraCost(e,tp,eg,ep,ev,re,r,rp,chk)
 	local c=e:GetHandler()
 	local id=c:GetOriginalCode()
 	if chk==0 then return Duel.GetCustomActivityCount(id,tp,ACTIVITY_SPSUMMON)==0 end
-	--Cannot Special Summon this turn, except Unsummonable
+	--You cannot Special Summon monsters, except monsters that cannot be Normal Summoned/Set, the turn you activate this effect
 	local e1=Effect.CreateEffect(c)
 	e1:SetDescription(aux.Stringid(id,1))
 	e1:SetType(EFFECT_TYPE_FIELD)
 	e1:SetProperty(EFFECT_FLAG_PLAYER_TARGET+EFFECT_FLAG_OATH+EFFECT_FLAG_CLIENT_HINT)
 	e1:SetCode(EFFECT_CANNOT_SPECIAL_SUMMON)
-	e1:SetReset(RESET_PHASE+PHASE_END)
 	e1:SetTargetRange(1,0)
-	e1:SetTarget(Drytron.TributeSummonLimit)
+	e1:SetTarget(function(e,c) return c:IsSummonableCard() end)
+	e1:SetReset(RESET_PHASE|PHASE_END)
 	Duel.RegisterEffect(e1,tp)
 end
-function Drytron.TributeSummonLimit(e,c)
-	return c:IsSummonableCard()
-end
-Drytron.TributeCost=aux.CostWithReplace(Drytron.TributeBaseCost,CARD_URSARCTIC_DRYTRON,nil,Drytron.TributeExtraCost)
+Drytron.TributeCost=aux.CostWithReplace(Drytron.TributeBaseCost,CARD_URSARCTIC_DRYTRON,Drytron.ExtraCon,Drytron.TributeExtraCost)
 
 --[[
 	Effect.CreateMysteruneQPEffect(c,id,[uniquecat,uniquetg,uniqueop,rmcount,uniqueprop,uniquecode])
@@ -1132,10 +1149,10 @@ end
 
 
 Arcana={}
--- checks if the card is affected by the effect of light barrier, in which case it doens't perform the coin toss
+-- checks if the player is affected by the effect of light barrier, in which case it doens't perform the coin toss
 -- but lets the player choose, otherwise it performs a normal coin toss
 function Arcana.TossCoin(c,tp)
-	if not c:IsHasEffect(CARD_LIGHT_BARRIER) then return Duel.TossCoin(tp,1) end
+	if not Duel.IsPlayerAffectedByEffect(tp,CARD_LIGHT_BARRIER) then return Duel.TossCoin(tp,1) end
 	local op=Duel.SelectOption(tp,aux.GetCoinEffectHintString(COIN_HEADS),aux.GetCoinEffectHintString(COIN_TAILS))
 	if op==0 then return COIN_HEADS end
 	return COIN_TAILS
@@ -1221,4 +1238,31 @@ function Infernoid.RegisterSummonProcedure(c,monstersToBanish)
 	e2:SetTarget(InfernoidInt.summonTarget(monstersToBanish))
 	e2:SetOperation(InfernoidInt.summonOperation)
 	c:RegisterEffect(e2)
+end
+
+DragonRuler={}
+do
+	local function discard_with_other_cost(filter)
+		return function(e,tp,eg,ep,ev,re,r,rp,chk)
+			local c=e:GetHandler()
+			if chk==0 then return Duel.IsExistingMatchingCard(filter,tp,LOCATION_HAND,0,1,c) end
+			Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_DISCARD)
+			local g=Duel.SelectMatchingCard(tp,filter,tp,LOCATION_HAND,0,1,1,c)
+			Duel.SendtoGrave(g+c,REASON_COST|REASON_DISCARD)
+		end
+	end
+	--For Level 7 monsters (can only discard to GY, and does not allow Dragons)
+	function DragonRuler.SelfDiscardToGraveCost(attr)
+		local function other_discard_to_grave_filter(c)
+			return c:IsAttribute(attr) and c:IsDiscardable() and c:IsAbleToGraveAsCost()
+		end
+		return Cost.AND(discard_with_other_cost(other_discard_to_grave_filter),Cost.SelfDiscardToGrave)
+	end
+	--For lower Level monsters (not limited to discarding to GY, and allows Dragons)
+	function DragonRuler.SelfDiscardCost(attr)
+		local function other_discard_filter(c)
+			return (c:IsAttribute(attr) or c:IsRace(RACE_DRAGON)) and c:IsDiscardable()
+		end
+		return Cost.AND(discard_with_other_cost(other_discard_filter),Cost.SelfDiscard)
+	end
 end

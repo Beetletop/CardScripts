@@ -1,5 +1,5 @@
 --ＣＸ ギミック・パペット－ファナティクス・マキナ
---CXyz Gimmick Puppet Fanatix Makina
+--CXyz Gimmick Puppet Fanatix Machinix
 --scripted by Naim
 local s,id=GetID()
 function s.initial_effect(c)
@@ -24,7 +24,7 @@ function s.initial_effect(c)
 	e2:SetType(EFFECT_TYPE_IGNITION)
 	e2:SetRange(LOCATION_MZONE)
 	e2:SetCountLimit(1,{id,1})
-	e2:SetCost(aux.dxmcostgen(1,1,nil))
+	e2:SetCost(Cost.DetachFromSelf(1,1,nil))
 	e2:SetTarget(s.sptg)
 	e2:SetOperation(s.spop)
 	c:RegisterEffect(e2)

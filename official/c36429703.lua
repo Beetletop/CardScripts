@@ -15,7 +15,7 @@ function s.initial_effect(c)
 	e1:SetCode(EVENT_SPSUMMON_SUCCESS)
 	e1:SetProperty(EFFECT_FLAG_DELAY)
 	e1:SetCountLimit(1,id)
-	e1:SetCondition(function(e) return e:GetHandler():IsSummonType(SUMMON_TYPE_LINK) end)
+	e1:SetCondition(function(e) return e:GetHandler():IsLinkSummoned() end)
 	e1:SetTarget(s.sptg)
 	e1:SetOperation(s.spop)
 	c:RegisterEffect(e1)
@@ -78,7 +78,7 @@ function s.setcon(e,tp,eg,ep,ev,re,r,rp)
 	return re:IsActiveType(TYPE_XYZ) and rc:IsSetCard(SET_RAIDRAPTOR) and rc:IsControler(tp)
 	--[[
 	return not e:GetHandler():IsStatus(STATUS_BATTLE_DESTROYED)
-		and re:IsMonsterEffect() and rc:IsSetCard(SET_RAIDRAPTOR) and rc:IsType(TYPE_XYZ) and rc:GetControler()==tp
+		and re:IsMonsterEffect() and rc:IsSetCard(SET_RAIDRAPTOR) and rc:IsType(TYPE_XYZ) and rc:IsControler(tp)
 	]]
 end
 function s.setfilter(c)

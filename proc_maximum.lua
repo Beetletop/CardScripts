@@ -5,6 +5,7 @@ FLAG_MAXIMUM_CENTER=170000000 --flag for center card maximum mode
 FLAG_MAXIMUM_SIDE=170000001 --flag for Left/right maximum card
 FLAG_MAXIMUM_CENTER_PREONFIELD=170000002 --those two flag are used to check is the card was a maximum monster while on the field (handling to improve later)
 FLAG_MAXIMUM_SIDE_PREONFIELD=170000004
+FLAG_MAXIMUM_SIDE_RELATION=180000000 --flag to check the related side pieces of a maximum monster
 if not aux.MaximumProcedure then
 	aux.MaximumProcedure = {}
 	Maximum = aux.MaximumProcedure
@@ -132,6 +133,7 @@ function Maximum.Operation(mats)
 		for tc in aux.Next(tg) do
 			tc:RegisterFlagEffect(FLAG_MAXIMUM_SIDE,RESET_EVENT+RESETS_STANDARD-RESET_TOFIELD,0,1)
 			tc:RegisterFlagEffect(FLAG_MAXIMUM_SIDE_PREONFIELD,RESET_EVENT+RESETS_STANDARD-RESET_TOFIELD-RESET_TOGRAVE-RESET_LEAVE,0,1)
+			tc:RegisterFlagEffect(FLAG_MAXIMUM_SIDE_RELATION+c:GetCardID(),RESET_EVENT+RESETS_STANDARD-RESET_TOFIELD-RESET_TOGRAVE-RESET_LEAVE,0,1)
 		end
 		g=Duel.GetFieldGroup(tp,LOCATION_MZONE,0)
 		Duel.SendtoGrave(g,REASON_RULE)
@@ -189,8 +191,8 @@ function Card.AddMaximumAtkHandler(c)
 end
 --function that return the value of the "maximum atk" of the monster
 function Card.GetMaximumAttack(c)
-	local m=c:GetMetatable(true)
-	if not m then return false end
+	local m=c:GetMetatable(false)
+	if not m then return 0 end
 	return m.MaximumAttack
 end
 --function that provide effects of the center piece to the side (mainly used for protection effects)
@@ -253,6 +255,7 @@ function Card.AddSideMaximumHandler(c,eff)
 	e6:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_GRANT)
 	e6:SetRange(LOCATION_MZONE)
 	e6:SetTargetRange(LOCATION_MZONE,0)
+	e6:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
 	e6:SetCondition(Maximum.sideCon)
 	e6:SetTarget(Maximum.eftgMax)
 	e6:SetLabelObject(eff)
@@ -284,6 +287,7 @@ function Card.AddSideMaximumHandler(c,eff)
 	local e11=Effect.CreateEffect(c)
 	e11:SetType(EFFECT_TYPE_SINGLE)
 	e11:SetCode(EFFECT_CANNOT_ATTACK)
+	e11:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
 	e11:SetCondition(Maximum.sideCon)
 	c:RegisterEffect(e11)
 
@@ -304,7 +308,7 @@ function Card.AddSideMaximumHandler(c,eff)
 	--self destroy
 	local e14=Effect.CreateEffect(c)
 	e14:SetType(EFFECT_TYPE_SINGLE)
-	e14:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+	e14:SetProperty(EFFECT_FLAG_SINGLE_RANGE+EFFECT_FLAG_CANNOT_DISABLE)
 	e14:SetRange(LOCATION_MZONE)
 	e14:SetCode(EFFECT_SELF_DESTROY)
 	e14:SetCondition(Maximum.SelfDestructCondition)
@@ -314,9 +318,19 @@ function Card.AddSideMaximumHandler(c,eff)
 	local e16=Effect.CreateEffect(c)
 	e16:SetType(EFFECT_TYPE_SINGLE)
 	e16:SetCode(EFFECT_UPDATE_DEFENSE)
+	e16:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
 	e16:SetCondition(Maximum.sideCon)
 	e16:SetValue(-1000000)
 	c:RegisterEffect(e16)
+
+	--cannot be tributed for a cost or a Ritual Summon
+	local e17=Effect.CreateEffect(c)
+	e17:SetType(EFFECT_TYPE_SINGLE)
+	e17:SetCode(EFFECT_UNRELEASABLE_NONSUM)
+	e17:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
+	e17:SetCondition(Maximum.sideCon)
+	e17:SetValue(1)
+	c:RegisterEffect(e17)
 
 	baseeff:Reset()
 end

@@ -13,10 +13,10 @@ function s.initial_effect(c)
 	e1:SetType(EFFECT_TYPE_IGNITION)
 	e1:SetRange(LOCATION_MZONE)
 	e1:SetCountLimit(1,id)
-	e1:SetCost(aux.dxmcostgen(1,1,nil))
+	e1:SetCost(Cost.DetachFromSelf(1,1,nil))
 	e1:SetTarget(s.thtgtg)
 	e1:SetOperation(s.thtgop)
-	c:RegisterEffect(e1,false,REGISTER_FLAG_DETACH_XMAT)
+	c:RegisterEffect(e1)
 	--Special Summon this card
 	local e2=Effect.CreateEffect(c)
 	e2:SetDescription(aux.Stringid(id,1))
@@ -55,7 +55,7 @@ function s.spop(e,tp,eg,ep,ev,re,r,rp)
 	if c:IsRelateToEffect(e) and Duel.SpecialSummonStep(c,0,tp,tp,false,false,POS_FACEUP) then
 		local ct=Duel.GetMatchingGroupCount(aux.FaceupFilter(Card.IsMonster),tp,LOCATION_REMOVED,0,nil)
 		if ct>0 then
-			c:UpdateAttack(ct*100,RESET_EVENT|RESETS_STANDARD|RESET_PHASE|PHASE_END)
+			c:UpdateAttack(ct*100,RESETS_STANDARD_PHASE_END)
 		end
 	end
 	Duel.SpecialSummonComplete()

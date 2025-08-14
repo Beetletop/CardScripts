@@ -1,5 +1,5 @@
 --銀翼のＡＸＥ－サリー
---Sari of the Silverwinge Axe
+--Sari of the Silverwing Axe
 --scripted by Naim
 local s,id=GetID()
 function s.initial_effect(c)
@@ -13,7 +13,7 @@ function s.initial_effect(c)
 	e1:SetRange(LOCATION_HAND|LOCATION_MZONE)
 	e1:SetHintTiming(TIMING_DAMAGE_STEP,TIMING_DAMAGE_STEP|TIMINGS_CHECK_MONSTER_E)
 	e1:SetCountLimit(1,id)
-	e1:SetCondition(function() return Duel.GetCurrentPhase()~=PHASE_DAMAGE or not Duel.IsDamageCalculated() end)
+	e1:SetCondition(aux.StatChangeDamageStepCondition)
 	e1:SetTarget(s.eqtg)
 	e1:SetOperation(s.eqop)
 	c:RegisterEffect(e1)

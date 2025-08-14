@@ -3,7 +3,7 @@
 --scripted by Naim
 local s,id=GetID()
 function s.initial_effect(c)
-	-- Add Add 1 "Abyss Actor" card and 1 "Abyss Script" Spell to the hand
+	--Add Add 1 "Abyss Actor" card and 1 "Abyss Script" Spell to the hand
 	local e1=Effect.CreateEffect(c)
 	e1:SetDescription(aux.Stringid(id,0))
 	e1:SetCategory(CATEGORY_TOHAND+CATEGORY_SEARCH)
@@ -16,7 +16,7 @@ function s.initial_effect(c)
 end
 s.listed_series={SET_ABYSS_ACTOR,SET_ABYSS_SCRIPT}
 function s.condition(e,tp,eg,ep,ev,re,r,rp)
-	return Duel.GetCurrentPhase()==PHASE_MAIN1 and not Duel.CheckPhaseActivity()
+	return Duel.IsPhase(PHASE_MAIN1) and not Duel.CheckPhaseActivity()
 end
 function s.thfilter(c)
 	return c:IsAbleToHand() and (c:IsSetCard(SET_ABYSS_ACTOR) or (c:IsSpell() and c:IsSetCard(SET_ABYSS_SCRIPT)))

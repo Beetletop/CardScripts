@@ -1,12 +1,12 @@
--- 魔頭砲グレンザウルス
--- Grenosaurus Giga-Cannon
--- Scripted by Satella
+--魔頭砲グレンザウルス
+--Grenosaurus Giga-Cannon
+--Scripted by Satella
 local s,id=GetID()
 function s.initial_effect(c)
 	c:EnableReviveLimit()
-	-- Xyz Summon procedure
+	--Xyz Summon procedure
 	Xyz.AddProcedure(c,nil,4,2)
-	-- Inflict 1000 damage to your opp
+	--Inflict 1000 damage to your opp
 	local e1=Effect.CreateEffect(c)
 	e1:SetDescription(aux.Stringid(id,0))
 	e1:SetCategory(CATEGORY_DAMAGE+CATEGORY_ATKCHANGE)
@@ -14,11 +14,11 @@ function s.initial_effect(c)
 	e1:SetCode(EVENT_BATTLE_DESTROYED)
 	e1:SetRange(LOCATION_MZONE)
 	e1:SetCondition(s.damcon)
-	e1:SetCost(aux.dxmcostgen(1,1,nil))
+	e1:SetCost(Cost.DetachFromSelf(1,1,nil))
 	e1:SetTarget(s.damtg)
 	e1:SetOperation(s.damop)
-	c:RegisterEffect(e1,false,REGISTER_FLAG_DETACH_XMAT)
-	-- Destroy 1 card on the field
+	c:RegisterEffect(e1)
+	--Destroy 1 card on the field
 	local e2=Effect.CreateEffect(c)
 	e2:SetDescription(aux.Stringid(id,1))
 	e2:SetCategory(CATEGORY_DESTROY+CATEGORY_DAMAGE)
@@ -67,7 +67,7 @@ function s.damop(e,tp,eg,ep,ev,re,r,rp)
 end
 function s.descon(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	return c:IsPreviousLocation(LOCATION_MZONE) and c:IsSummonType(SUMMON_TYPE_XYZ)
+	return c:IsPreviousLocation(LOCATION_MZONE) and c:IsXyzSummoned()
 end
 function s.destg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 	if chkc then return chkc:IsOnField() end

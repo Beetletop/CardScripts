@@ -1,7 +1,8 @@
+--ＲＥＳＯＲＴ」 ＳＴＡＦＦ－チャーミング
 --Charming Resort Staff
 local s,id=GetID()
 function s.initial_effect(c)
-	--atkdown
+	--Change the ATK of an opponent's monster to 0
 	local e1=Effect.CreateEffect(c)
 	e1:SetDescription(aux.Stringid(id,0))
 	e1:SetCategory(CATEGORY_ATKCHANGE)
@@ -12,7 +13,7 @@ function s.initial_effect(c)
 	e1:SetTarget(s.atktg)
 	e1:SetOperation(s.atkop)
 	c:RegisterEffect(e1)
-	--special summon
+	--Special Summon 1 "SPYRAL Super Agent" from your Deck
 	local e2=Effect.CreateEffect(c)
 	e2:SetDescription(aux.Stringid(id,1))
 	e2:SetCategory(CATEGORY_SPECIAL_SUMMON)
@@ -23,7 +24,7 @@ function s.initial_effect(c)
 	e2:SetTarget(s.sptg)
 	e2:SetOperation(s.spop)
 	c:RegisterEffect(e2)
-	--to hand
+	--Return 1 "SPYRAL Super Agent" from your Graveyard to your hand
 	local e3=Effect.CreateEffect(c)
 	e3:SetDescription(aux.Stringid(id,2))
 	e3:SetCategory(CATEGORY_TOHAND)
@@ -32,7 +33,7 @@ function s.initial_effect(c)
 	e3:SetCode(EVENT_BATTLE_DESTROYED)
 	e3:SetRange(LOCATION_GRAVE)
 	e3:SetCondition(s.thcon)
-	e3:SetCost(aux.bfgcost)
+	e3:SetCost(Cost.SelfBanish)
 	e3:SetTarget(s.thtg)
 	e3:SetOperation(s.thop)
 	c:RegisterEffect(e3)
@@ -40,7 +41,7 @@ function s.initial_effect(c)
 	e4:SetCode(EVENT_TO_GRAVE)
 	c:RegisterEffect(e4)
 end
-s.listed_names={41091257}
+s.listed_names={41091257} --"SPYRAL Super Agent"
 function s.atkcon(e,tp,eg,ep,ev,re,r,rp)
 	local a=Duel.GetAttacker()
 	local d=Duel.GetAttackTarget()
@@ -62,12 +63,12 @@ function s.atkop(e,tp,eg,ep,ev,re,r,rp)
 		e1:SetType(EFFECT_TYPE_SINGLE)
 		e1:SetCode(EFFECT_SET_ATTACK_FINAL)
 		e1:SetValue(0)
-		e1:SetReset(RESET_EVENT+RESETS_STANDARD)
+		e1:SetReset(RESET_EVENT|RESETS_STANDARD)
 		tc:RegisterEffect(e1)
 	end
 end
 function s.spcon(e,tp,eg,ep,ev,re,r,rp)
-	return r&REASON_EFFECT+REASON_BATTLE~=0
+	return r&(REASON_EFFECT|REASON_BATTLE)>0
 end
 function s.spfilter(c,e,tp)
 	return c:IsCode(41091257) and c:IsCanBeSpecialSummoned(e,0,tp,false,false)

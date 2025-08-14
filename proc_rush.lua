@@ -1,3 +1,4 @@
+EFFECT_IS_LEGEND=160212041
 -- List of Legend cards, to be used with Card.IsLegend
 local LEGEND_LIST={160001000,160205001,160418001,160002000,160421015,160404001,160421016,160432004,160003000,
 160006000,160417001,160429001,160318004,160417002,160310002,160417003,160011000,160012000,160008000,160005000,
@@ -7,10 +8,12 @@ local LEGEND_LIST={160001000,160205001,160418001,160002000,160421015,160404001,1
 160436005,160437001,160206019,160206002,160206008,160206022,160206028,160013020,160440001,160440002,160440003,
 160429002,160208063,160208064,160208065,160014065,160446002,160015056,160210001,160207060,160210032,160210029,
 160210058,160440010,160016033,160016034,160440011,160211080,160402039,160017033,160402040,160429003,160320014,
-160320038,160018036}
+160320038,160018036,160212004,160212003,160402044,160212075,160212001,160402045,160019063,160019064,160019065,
+160213078,160213082,160402047,160213084,160020059,160213076,160020001,160020040,160020000,160214052,160323029,
+160214020,160021065,160021027,160402052,160215086,160324001}
 -- Returns if a card is a Legend. Can be updated if a GetOT function is added to the core
 function Card.IsLegend(c)
-	return c:IsOriginalCode(table.unpack(LEGEND_LIST))
+	return c:IsHasEffect(EFFECT_IS_LEGEND) or c:IsOriginalCode(table.unpack(LEGEND_LIST))
 end
 
 if Duel.IsDuelType(DUEL_INVERTED_QUICK_PRIORITY) then
@@ -52,6 +55,36 @@ end
 function Card.IsCanChangePositionRush(c)
 	return c:IsCanChangePosition() and not c:IsMaximumMode()
 end
+function Card.CanChangeIntoTypeRush(c,type,turnvalue)
+	if not c:IsRace(type) then return true end
+	if c:IsOriginalRace(type) then return false end
+	if not c:IsHasEffect(EFFECT_CHANGE_RACE) then return true end
+	if nil==turnvalue then turnvalue=1 end
+	local eff={c:GetCardEffect(EFFECT_CHANGE_RACE)}
+	for _,te in ipairs(eff) do
+		local effType=te:GetType()
+		if effType~=EFFECT_TYPE_FIELD and eff_type~=EFFECT_TYPE_EQUIP then
+			local _,effectvalue=te:GetReset()
+			if effectvalue>=turnvalue then return false end
+		end
+	end
+	return true
+end
+function Card.CanChangeIntoAttributeRush(c,attribute,turnvalue)
+	if not c:IsAttribute(attribute) then return true end
+	if c:IsOriginalAttribute(attribute) then return false end
+	if not c:IsHasEffect(EFFECT_CHANGE_ATTRIBUTE) then return true end
+	if nil==turnvalue then turnvalue=1 end
+	local eff={c:GetCardEffect(EFFECT_CHANGE_ATTRIBUTE)}
+	for _,te in ipairs(eff) do
+		local effType=te:GetType()
+		if effType~=EFFECT_TYPE_FIELD and eff_type~=EFFECT_TYPE_EQUIP then
+			local _,effectvalue=te:GetReset()
+			if effectvalue>=turnvalue then return false end
+		end
+	end
+	return true
+end
 
 --Add function to simplify some effect
 --c: the card gaining effect
@@ -85,7 +118,7 @@ FLAG_DOUBLE_TRIB_DRAGON=160402002 --righteous dragon
 FLAG_DOUBLE_TRIB_FIRE=160007025 --dododo second
 FLAG_DOUBLE_TRIB_WINGEDBEAST=160005033 --blasting bird
 FLAG_DOUBLE_TRIB_LIGHT=160414001 --ultimate flag beast surge bicorn
-FLAG_DOUBLE_TRIB_MACHINE=160414002
+FLAG_DOUBLE_TRIB_MACHINE=160414101
 FLAG_DOUBLE_TRIB_DARK=160317015 --Voidvelgr Globule
 FLAG_DOUBLE_TRIB_GALAXY=160317115
 FLAG_DOUBLE_TRIB_WIND=160011022 -- Bluegrass Stealer
@@ -99,7 +132,14 @@ FLAG_DOUBLE_TRIB_WYRM=160015011 -- Demolition Soldier Ashiba Bikke
 FLAG_DOUBLE_TRIB_FIEND=160210078 -- Royal Rebel's Guardian
 FLAG_DOUBLE_TRIB_SPELLCASTER=160017008 -- Releaslayer
 FLAG_DOUBLE_TRIB_0_ATK=160017041 -- Multiply Skull
-FLAG_DOUBLE_TRIB_0_DEF=160017141 
+FLAG_DOUBLE_TRIB_0_DEF=160017141
+FLAG_DOUBLE_TRIB_EFFECT=160017241
+FLAG_DOUBLE_TRIB_LEGEND=160212047 -- Legend Scout
+FLAG_DOUBLE_TRIB_FAIRY=160019009 -- Dice Key Lilith
+FLAG_DOUBLE_TRIB_OBLIVION=160020004 -- Chaos Coolstars
+FLAG_DOUBLE_TRIB_REQUIEM=160020104
+FLAG_DOUBLE_TRIB_EARTH=160021008 --Mamabot
+FLAG_DOUBLE_TRIB_OTS_OBLIVION=160022005 --OuTerverSe Needle Maker
 function Card.AddDoubleTribute(c,id,otfilter,eftg,reset,...)
 	for i,flag in ipairs{...} do
 		c:RegisterFlagEffect(flag,reset,0,1)

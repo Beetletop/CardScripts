@@ -1,5 +1,5 @@
 --大儺主水
---Dyna Mond
+--Dyna Mondo
 --scripted by Naim
 local s,id=GetID()
 function s.initial_effect(c)
@@ -28,7 +28,7 @@ function s.initial_effect(c)
 	e2:SetHintTiming(0,TIMING_MAIN_END|TIMINGS_CHECK_MONSTER_E)
 	e2:SetCountLimit(1,{id,1})
 	e2:SetCondition(function(_,tp) return Duel.IsTurnPlayer(1-tp) end)
-	e2:SetCost(aux.selfreleasecost)
+	e2:SetCost(Cost.SelfTribute)
 	e2:SetTarget(s.sptg)
 	e2:SetOperation(s.spop)
 	c:RegisterEffect(e2)

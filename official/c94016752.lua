@@ -12,14 +12,10 @@ function s.initial_effect(c)
 	e1:SetCode(EVENT_FREE_CHAIN)
 	e1:SetCountLimit(1,id,EFFECT_COUNT_CODE_OATH)
 	e1:SetCondition(function(e,tp) return Duel.IsExistingMatchingCard(Card.IsFaceup,tp,0,LOCATION_MZONE,1,nil) end)
-	e1:SetCost(s.cost)
+	e1:SetCost(Cost.PayLP(1500))
 	e1:SetTarget(s.target)
 	e1:SetOperation(s.activate)
 	c:RegisterEffect(e1)
-end
-function s.cost(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return Duel.CheckLPCost(tp,1500) end
-	Duel.PayLPCost(tp,1500)
 end
 function s.target(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return true end
@@ -41,7 +37,7 @@ function s.activate(e,tp,eg,ep,ev,re,r,rp)
 	Duel.HintSelection(sc,true)
 	local code=sc:GetCode()
 	if Duel.SendtoGrave(sc,REASON_RULE,PLAYER_NONE,1-tp)>0 then
-		sc:RegisterFlagEffect(id,RESET_EVENT|RESETS_STANDARD|RESET_PHASE|PHASE_END,0,1)
+		sc:RegisterFlagEffect(id,RESETS_STANDARD_PHASE_END,0,1)
 		--Cannot activate the monster effects of that monster or monsters with that name
 		local e1=Effect.CreateEffect(e:GetHandler())
 		e1:SetType(EFFECT_TYPE_FIELD)

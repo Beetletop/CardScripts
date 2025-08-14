@@ -3,7 +3,7 @@
 local s,id=GetID()
 function s.initial_effect(c)
 	c:EnableReviveLimit()
-	--Xyz Summon procedure
+	--Xyz Summon procedure: 3 Level 7 monsters
 	Xyz.AddProcedure(c,nil,7,3)
 	--Roll a die twice
 	local e1=Effect.CreateEffect(c)
@@ -11,10 +11,10 @@ function s.initial_effect(c)
 	e1:SetCategory(CATEGORY_ATKCHANGE+CATEGORY_TOGRAVE+CATEGORY_SPECIAL_SUMMON+CATEGORY_DRAW+CATEGORY_HANDES)
 	e1:SetType(EFFECT_TYPE_IGNITION)
 	e1:SetRange(LOCATION_MZONE)
-	e1:SetCost(aux.dxmcostgen(1,1,nil))
+	e1:SetCost(Cost.DetachFromSelf(1,1,nil))
 	e1:SetTarget(s.target)
 	e1:SetOperation(s.operation)
-	c:RegisterEffect(e1,false,REGISTER_FLAG_DETACH_XMAT)
+	c:RegisterEffect(e1)
 end
 s.roll_dice=true
 s.xyz_number=7
@@ -31,15 +31,15 @@ function s.spfilter(c,e,tp)
 end
 function s.operation(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	if not c:IsRelateToEffect(e) then return end
+	if not (c:IsRelateToEffect(e) and c:IsFaceup()) then return end
 	local d1,d2=Duel.TossDice(tp,2)
 	if d2>d1 then d1,d2=d2,d1 end
-	--Change ATK
+	--This card's ATK becomes the larger number rolled x 700 until your opponent's next End Phase
 	local e1=Effect.CreateEffect(c)
 	e1:SetType(EFFECT_TYPE_SINGLE)
 	e1:SetCode(EFFECT_SET_ATTACK_FINAL)
 	e1:SetValue(d1*700)
-	e1:SetReset(RESET_EVENT|RESETS_STANDARD|RESET_PHASE|PHASE_END,2)
+	e1:SetReset(RESETS_STANDARD_DISABLE_PHASE_END,2)
 	c:RegisterEffect(e1)
 	if d1+d2~=7 then return end
 	--If the total roll is exactly 7, apply 1 effect
@@ -66,6 +66,8 @@ function s.operation(e,tp,eg,ep,ev,re,r,rp)
 		Duel.SpecialSummon(sg,0,tp,tp,false,false,POS_FACEUP)
 	elseif op==3 then
 		--Draw 3 cards, then discard 2 cards
+		if not Duel.IsPlayerCanDraw(tp) then return end
+		Duel.BreakEffect()
 		if Duel.Draw(tp,3,REASON_EFFECT)~=3 then return end
 		Duel.BreakEffect()
 		Duel.DiscardHand(tp,nil,2,2,REASON_EFFECT|REASON_DISCARD)

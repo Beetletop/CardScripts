@@ -38,7 +38,7 @@ function s.initial_effect(c)
 	e3:SetCode(EVENT_ATTACK_ANNOUNCE)
 	e3:SetRange(LOCATION_MZONE)
 	e3:SetCountLimit(1,0,EFFECT_COUNT_CODE_SINGLE)
-	e3:SetCondition(function(e,tp) return Duel.GetAttacker():GetControler()==1-tp end)
+	e3:SetCondition(function(e,tp) return Duel.GetAttacker():IsControler(1-tp) end)
 	e3:SetTarget(s.rmtg)
 	e3:SetOperation(s.rmop)
 	c:RegisterEffect(e3)
@@ -89,13 +89,13 @@ function s.rmop(e,tp,eg,ep,ev,re,r,rp,chk)
 		local og=Duel.GetOperatedGroup()
 		if og:IsContains(c) then
 			local ct=1
-			if Duel.IsTurnPlayer(tp) and Duel.GetCurrentPhase()==PHASE_END then
+			if Duel.IsTurnPlayer(tp) and Duel.IsPhase(PHASE_END) then
 				ct=2
 				e:GetLabelObject():SetLabel(Duel.GetTurnCount())
 			else
 				e:GetLabelObject():SetLabel(0)
 			end
-			c:RegisterFlagEffect(id,RESET_EVENT|RESETS_STANDARD|RESET_PHASE|PHASE_END|RESET_SELF_TURN,0,ct)
+			c:RegisterFlagEffect(id,RESETS_STANDARD_PHASE_END|RESET_SELF_TURN,0,ct)
 		end
 	end
 end

@@ -33,10 +33,10 @@ function s.initial_effect(c)
 	e3:SetProperty(EFFECT_FLAG_CARD_TARGET)
 	e3:SetRange(LOCATION_MZONE)
 	e3:SetCountLimit(1,{id,1})
-	e3:SetCost(aux.dxmcostgen(1,1))
+	e3:SetCost(Cost.DetachFromSelf(1,1))
 	e3:SetTarget(s.destg)
 	e3:SetOperation(s.desop)
-	c:RegisterEffect(e3,false,REGISTER_FLAG_DETACH_XMAT)
+	c:RegisterEffect(e3)
 	--Place this card in the Pendulum Zone
 	local e4=Effect.CreateEffect(c)
 	e4:SetDescription(aux.Stringid(id,2))
@@ -73,7 +73,7 @@ function s.spop(e,tp,eg,ep,ev,re,r,rp)
 end
 function s.matcon(e)
 	local c=e:GetHandler()
-	return c:IsStatus(STATUS_SPSUMMON_TURN) and c:IsSummonType(SUMMON_TYPE_XYZ)
+	return c:IsStatus(STATUS_SPSUMMON_TURN) and c:IsXyzSummoned()
 end
 function s.destg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 	if chkc then return chkc:IsLocation(LOCATION_MZONE) and chkc:IsControler(1-tp) and chkc:IsFaceup() and chkc:IsAttackBelow(3000) end

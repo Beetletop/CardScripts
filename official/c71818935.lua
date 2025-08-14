@@ -1,5 +1,5 @@
 --閉ザサレシ天ノ月
---Moon of the Closed Sky
+--Moon of the Closed Heaven
 --Scripted by Larry126
 local s,id=GetID()
 function s.initial_effect(c)
@@ -43,11 +43,11 @@ function s.operation(e,tp,eg,ep,ev,re,r,rp)
 	e1:SetAbsoluteRange(tp,1,0)
 	e1:SetOperation(s.extracon)
 	e1:SetValue(s.extraval)
-	e1:SetReset(RESET_EVENT|RESETS_STANDARD|RESET_PHASE|PHASE_END)
+	e1:SetReset(RESETS_STANDARD_PHASE_END)
 	tc:RegisterEffect(e1)
 	c:CreateEffectRelation(e1)
 	tc:SetCardTarget(c)
-	tc:RegisterFlagEffect(id,RESET_EVENT|RESETS_STANDARD|RESET_PHASE|PHASE_END,EFFECT_FLAG_CLIENT_HINT,1,0,aux.Stringid(id,1))
+	tc:RegisterFlagEffect(id,RESETS_STANDARD_PHASE_END,EFFECT_FLAG_CLIENT_HINT,1,0,aux.Stringid(id,1))
 end
 function s.extrafilter(c,tp)
 	return c:IsLocation(LOCATION_MZONE) and c:IsControler(tp)

@@ -19,10 +19,10 @@ s.listed_names={CARD_ALBAZ}
 function s.tdfilter(c,e,tp)
 	return c:IsCanBeEffectTarget(e) and c:IsAbleToDeck()
 		and ((c:IsControler(tp) and c:IsFaceup() and c:IsType(TYPE_FUSION))
-		or (c:IsControler(1-tp) and c:IsSummonType(SUMMON_TYPE_SPECIAL) and c:IsSummonLocation(LOCATION_EXTRA)))
+		or (c:IsControler(1-tp) and c:IsSpecialSummoned() and c:IsSummonLocation(LOCATION_EXTRA)))
 end
 function s.rescon(sg,e,tp,mg)
-    return sg:FilterCount(Card.IsControler,nil,tp)==1
+	return sg:FilterCount(Card.IsControler,nil,tp)==1
 end
 function s.target(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 	if chkc then return false end

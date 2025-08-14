@@ -10,7 +10,7 @@ function s.initial_effect(c)
 	local e1=Effect.CreateEffect(c)
 	e1:SetType(EFFECT_TYPE_SINGLE)
 	e1:SetCode(EFFECT_INDESTRUCTABLE_BATTLE)
-	e1:SetValue(aux.NOT(aux.TargetBoolFunction(Card.IsSetCard,0x48)))
+	e1:SetValue(aux.NOT(aux.TargetBoolFunction(Card.IsSetCard,SET_NUMBER)))
 	c:RegisterEffect(e1)
 	--disable
 	local e2=Effect.CreateEffect(c)
@@ -33,7 +33,7 @@ function s.initial_effect(c)
 	e4:SetCondition(s.efcon)
 	e4:SetTarget(s.eftg)
 	e4:SetLabelObject(e3)
-	c:RegisterEffect(e4,false,REGISTER_FLAG_DETACH_XMAT)
+	c:RegisterEffect(e4)
 end
 s.listed_series={0x48}
 s.listed_names={86532744}

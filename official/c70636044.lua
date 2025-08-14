@@ -1,11 +1,11 @@
 --終戒超獸－ヴァルドラス
---Technalogue - Valdrath
+--Varudras, the Final Bringer of the End Times
 --scripted by Naim
 local s,id=GetID()
 function s.initial_effect(c)
 	c:EnableReviveLimit()
 	--Xyz Summon procedure
-	Xyz.AddProcedure(c,nil,10,2,nil,nil,99)
+	Xyz.AddProcedure(c,nil,10,2,nil,nil,Xyz.InfiniteMats)
 	--Negate the activation of a card or effect, then destroy 1 card on the field
 	local e1=Effect.CreateEffect(c)
 	e1:SetDescription(aux.Stringid(id,0))
@@ -16,10 +16,10 @@ function s.initial_effect(c)
 	e1:SetRange(LOCATION_MZONE)
 	e1:SetCountLimit(1,id)
 	e1:SetCondition(s.negcon)
-	e1:SetCost(aux.dxmcostgen(1,1,nil))
+	e1:SetCost(Cost.DetachFromSelf(1,1,nil))
 	e1:SetTarget(s.negtg)
 	e1:SetOperation(s.negop)
-	c:RegisterEffect(e1,false,REGISTER_FLAG_DETACH_XMAT)
+	c:RegisterEffect(e1)
 	--At start of Damage Step, destroy 1 card on the field
 	local e2=Effect.CreateEffect(c)
 	e2:SetDescription(aux.Stringid(id,1))
@@ -88,5 +88,5 @@ function s.desop(e,tp,eg,ep,ev,re,r,rp)
 end
 function s.xyzdescon(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	return c:IsPreviousLocation(LOCATION_MZONE) and c:IsSummonType(SUMMON_TYPE_XYZ)
+	return c:IsPreviousLocation(LOCATION_MZONE) and c:IsXyzSummoned()
 end

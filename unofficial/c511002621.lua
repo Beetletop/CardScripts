@@ -92,11 +92,11 @@ end
 function s.limitop(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	local g=Duel.GetMatchingGroup(s.limitfilter,tp,0xff,0xff,nil)
-	for tc in aux.Next(g) do
+	for tc in g:Iter() do
 		tc:RegisterFlagEffect(id,0,0,0)
 	end
 	local g2=Duel.GetMatchingGroup(s.limitfilter2,tp,0xff,0xff,nil)
-	for tc in aux.Next(g2) do
+	for tc in g2:Iter() do
 		tc:RegisterFlagEffect(id+1,0,0,0)
 	end
 end
@@ -140,18 +140,18 @@ end
 function s.atkcheckop(e,tp,eg,ep,ev,re,r,rp)
 	if e:GetHandler():GetFlagEffect(id-1)~=0 then return end
 	local fid=eg:GetFirst():GetFieldID()
-	e:GetHandler():RegisterFlagEffect(id-1,RESET_PHASE+PHASE_END,0,1)
+	e:GetHandler():RegisterFlagEffect(id-1,RESET_PHASE|PHASE_END,0,1)
 	e:GetLabelObject():SetLabel(fid)
 end
 function s.wincon(e,tp,eg,ep,ev,re,r,rp)
 	local p=Duel.GetTurnPlayer()
-	return Duel.GetFieldGroupCount(p,LOCATION_MZONE,0)==0 and Duel.GetActivityCount(p,ACTIVITY_NORMALSUMMON)==0 
+	return Duel.GetFieldGroupCount(p,LOCATION_MZONE,0)==0 and Duel.GetActivityCount(p,ACTIVITY_NORMALSUMMON)==0
 		and Duel.GetActivityCount(p,ACTIVITY_SPSUMMON)==0 and Duel.GetActivityCount(p,ACTIVITY_FLIPSUMMON)==0
 end
 function s.winop(e,tp,eg,ep,ev,re,r,rp)
-	local WIN_REASON=0x58
+	local WIN_REASON=0x5a
 	local p=Duel.GetTurnPlayer()
-	if Duel.GetFieldGroupCount(p,LOCATION_MZONE,0)==0 and Duel.GetActivityCount(p,ACTIVITY_NORMALSUMMON)==0 
+	if Duel.GetFieldGroupCount(p,LOCATION_MZONE,0)==0 and Duel.GetActivityCount(p,ACTIVITY_NORMALSUMMON)==0
 		and Duel.GetActivityCount(p,ACTIVITY_SPSUMMON)==0 and Duel.GetActivityCount(p,ACTIVITY_FLIPSUMMON)==0 then
 		Duel.Win(1-p,WIN_REASON)
 	end

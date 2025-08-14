@@ -1,5 +1,5 @@
 --大聖剣博物館
---The Noble Arms Museum
+--Noble Arms Museum
 --Scripted by Larry126
 local s,id=GetID()
 function s.initial_effect(c)
@@ -24,7 +24,7 @@ function s.initial_effect(c)
 	e3:SetType(EFFECT_TYPE_IGNITION)
 	e3:SetRange(LOCATION_FZONE)
 	e3:SetCountLimit(1)
-	e3:SetCost(s.thcost)
+	e3:SetCost(Cost.PayLP(1200))
 	e3:SetTarget(s.thtg)
 	e3:SetOperation(s.thop)
 	c:RegisterEffect(e3)
@@ -43,10 +43,6 @@ function s.initial_effect(c)
 end
 s.listed_series={SET_NOBLE_ARMS,SET_NOBLE_KNIGHT}
 s.listed_names={id,CARD_INFERNOBLE_CHARLES}
-function s.thcost(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return Duel.CheckLPCost(tp,1200) end
-	Duel.PayLPCost(tp,1200)
-end
 function s.thfilter(c)
 	return c:IsSetCard(SET_NOBLE_ARMS) and not c:IsCode(id) and c:IsAbleToHand()
 end
@@ -55,7 +51,7 @@ function s.thtg(e,tp,eg,ep,ev,re,r,rp,chk)
 	Duel.SetOperationInfo(0,CATEGORY_TOHAND,nil,1,tp,LOCATION_DECK)
 end
 function s.thop(e,tp,eg,ep,ev,re,r,rp)
-	e:GetHandler():RegisterFlagEffect(id,RESET_EVENT|RESETS_STANDARD|RESET_PHASE|PHASE_END,EFFECT_FLAG_CLIENT_HINT,1,nil,aux.Stringid(id,2))
+	e:GetHandler():RegisterFlagEffect(id,RESETS_STANDARD_PHASE_END,EFFECT_FLAG_CLIENT_HINT,1,nil,aux.Stringid(id,2))
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
 	local g=Duel.SelectMatchingCard(tp,s.thfilter,tp,LOCATION_DECK,0,1,1,nil)
 	if #g>0 then

@@ -32,9 +32,9 @@ function s.initial_effect(c)
 	e3:SetCode(EVENT_ATTACK_ANNOUNCE)
 	e3:SetRange(LOCATION_MZONE)
 	e3:SetCondition(s.con)
-	e3:SetCost(s.cost)
+	e3:SetCost(Cost.DetachFromSelf(1))
 	e3:SetOperation(s.op)
-	c:RegisterEffect(e3,false,REGISTER_FLAG_DETACH_XMAT)
+	c:RegisterEffect(e3)
 	--gain atk
 	local e4=Effect.CreateEffect(c)
 	e4:SetDescription(aux.Stringid(id,3))
@@ -98,10 +98,6 @@ end
 function s.con(e,tp,eg,ep,ev,re,r,rp)
 	return Duel.GetTurnPlayer()~=tp and Duel.GetAttackTarget()~=e:GetHandler()
 end
-function s.cost(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return e:GetHandler():CheckRemoveOverlayCard(tp,1,REASON_COST) end
-	e:GetHandler():RemoveOverlayCard(tp,1,1,REASON_COST)
-end
 function s.op(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	if c:IsRelateToEffect(e) then
@@ -149,5 +145,5 @@ function s.atkop2(e,tp,eg,ep,ev,re,r,rp)
 	end
 end
 function s.indes(e,c)
-	return not c:IsSetCard(0x48)
+	return not c:IsSetCard(SET_NUMBER)
 end

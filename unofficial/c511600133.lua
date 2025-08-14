@@ -12,10 +12,10 @@ function s.initial_effect(c)
 	e1:SetOperation(s.activate)
 	c:RegisterEffect(e1)
 end
-s.listed_series={0x2093,0x93}
+s.listed_series={SET_CYBER_ANGEL,SET_CYBER}
 function s.filter(c,e,tp,m1,m2,ft)
-	if not c:IsSetCard(0x2093) or (c:GetType()&0x81)~=0x81
-		or not c:IsCanBeSpecialSummoned(e,SUMMON_TYPE_RITUAL,tp,false,true) then return false end
+	if not (c:IsSetCard(SET_CYBER_ANGEL) and c:IsRitualMonster()
+		and c:IsCanBeSpecialSummoned(e,SUMMON_TYPE_RITUAL,tp,false,true)) then return false end
 	local mg=m1:Filter(Card.IsCanBeRitualMaterial,c,c)
 	mg:Merge(m2)
 	if ft>0 then
@@ -31,7 +31,7 @@ function s.mfilterf(c,tp,mg,rc)
 	else return false end
 end
 function s.mfilter(c)
-	return c:GetLevel()>0 and c:IsSetCard(0x93) and c:IsAbleToDeck()
+	return c:GetLevel()>0 and c:IsSetCard(SET_CYBER) and c:IsAbleToDeck()
 end
 function s.target(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then

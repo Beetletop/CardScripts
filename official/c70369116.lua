@@ -5,17 +5,17 @@ local s,id=GetID()
 function s.initial_effect(c)
 	c:EnableReviveLimit()
 	Link.AddProcedure(c,aux.FilterBoolFunctionEx(Card.IsType,TYPE_EFFECT),2,2)
-	--Change attribute to DARK
+	--The attribute of 1 face-up monster becomes DARK until the end of this turn
 	local e1=Effect.CreateEffect(c)
 	e1:SetDescription(aux.Stringid(id,0))
 	e1:SetProperty(EFFECT_FLAG_CARD_TARGET)
 	e1:SetType(EFFECT_TYPE_IGNITION)
-	e1:SetCountLimit(1,id)
 	e1:SetRange(LOCATION_MZONE)
+	e1:SetCountLimit(1,id)
 	e1:SetTarget(s.attg)
 	e1:SetOperation(s.atop)
 	c:RegisterEffect(e1)
-	--Apply the effects of a "Fusion/Polymerization" spell
+	--This effect becomes the effect of 1 "Fusion" or "Polymerization" Normal or Quick-Play Spel when that card is activated
 	local e2=Effect.CreateEffect(c)
 	e2:SetDescription(aux.Stringid(id,1))
 	e2:SetType(EFFECT_TYPE_IGNITION)
@@ -26,7 +26,7 @@ function s.initial_effect(c)
 	e2:SetOperation(s.operation)
 	c:RegisterEffect(e2)
 end
-s.listed_series={0x46}
+s.listed_series={SET_FUSION}
 function s.atfilter(c)
 	return c:IsFaceup() and not c:IsAttribute(ATTRIBUTE_DARK)
 end
@@ -39,16 +39,17 @@ end
 function s.atop(e,tp,eg,ep,ev,re,r,rp)
 	local tc=Duel.GetFirstTarget()
 	if tc:IsFaceup() and tc:IsRelateToEffect(e) then
+		--It becomes DARK until the end of this turn
 		local e1=Effect.CreateEffect(e:GetHandler())
 		e1:SetType(EFFECT_TYPE_SINGLE)
 		e1:SetCode(EFFECT_CHANGE_ATTRIBUTE)
 		e1:SetValue(ATTRIBUTE_DARK)
-		e1:SetReset(RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_END)
+		e1:SetReset(RESETS_STANDARD_PHASE_END)
 		tc:RegisterEffect(e1)
 	end
 end
 function s.copfilter(c)
-	return c:IsAbleToGraveAsCost() and c:IsSetCard(0x46) and (c:GetType()==TYPE_SPELL or c:GetType()==TYPE_SPELL+TYPE_QUICKPLAY) and c:CheckActivateEffect(true,true,false)~=nil 
+	return c:IsAbleToGraveAsCost() and c:IsSetCard(SET_FUSION) and (c:IsNormalSpell() or c:IsQuickPlaySpell()) and c:CheckActivateEffect(true,true,false)~=nil
 end
 function s.cost(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.CheckLPCost(tp,2000) and Duel.IsExistingMatchingCard(s.copfilter,tp,LOCATION_DECK,0,1,nil) end
@@ -60,6 +61,7 @@ function s.target(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 		return tg and tg(e,tp,eg,ep,ev,re,r,rp,0,chkc)
 	end
 	if chk==0 then return Duel.IsExistingMatchingCard(s.copfilter,tp,LOCATION_DECK,0,1,nil) end
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_TOGRAVE)
 	local g=Duel.SelectMatchingCard(tp,s.copfilter,tp,LOCATION_DECK,0,1,1,nil)
 	if not Duel.SendtoGrave(g,REASON_COST) then return end
 	local te=g:GetFirst():CheckActivateEffect(true,true,false)
@@ -84,13 +86,13 @@ function s.operation(e,tp,eg,ep,ev,re,r,rp)
 		te:SetLabel(e:GetLabel())
 		te:SetLabelObject(e:GetLabelObject())
 	end
+	--You cannot Special Summon monsters for the rest of this turn
 	local e1=Effect.CreateEffect(e:GetHandler())
+	e1:SetDescription(aux.Stringid(id,2))
 	e1:SetType(EFFECT_TYPE_FIELD)
 	e1:SetCode(EFFECT_CANNOT_SPECIAL_SUMMON)
 	e1:SetProperty(EFFECT_FLAG_PLAYER_TARGET+EFFECT_FLAG_CLIENT_HINT)
-	e1:SetDescription(aux.Stringid(id,2))
 	e1:SetTargetRange(1,0)
-	e1:SetReset(RESET_PHASE+PHASE_END)
+	e1:SetReset(RESET_PHASE|PHASE_END)
 	Duel.RegisterEffect(e1,tp)
 end
-

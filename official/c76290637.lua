@@ -1,5 +1,5 @@
 --ギミック・パペット－ファンタジクス・マキナ
---Gimmick Puppet Fantasix Makina
+--Gimmick Puppet Fantasix Machinix
 --scripted by pyrQ
 local s,id=GetID()
 function s.initial_effect(c)
@@ -13,10 +13,10 @@ function s.initial_effect(c)
 	e1:SetType(EFFECT_TYPE_IGNITION)
 	e1:SetRange(LOCATION_MZONE)
 	e1:SetCountLimit(1,id)
-	e1:SetCost(aux.dxmcostgen(1,1,nil))
+	e1:SetCost(Cost.DetachFromSelf(1,1,nil))
 	e1:SetTarget(s.thtg)
 	e1:SetOperation(s.thop)
-	c:RegisterEffect(e1,false,REGISTER_FLAG_DETACH_XMAT)
+	c:RegisterEffect(e1)
 	--Special Summon this card from your GY to either field in Defense Position
 	local e2=Effect.CreateEffect(c)
 	e2:SetDescription(aux.Stringid(id,1))

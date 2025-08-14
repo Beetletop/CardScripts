@@ -27,7 +27,7 @@ function s.initial_effect(c)
 	local e3=Effect.CreateEffect(c)
 	e3:SetType(EFFECT_TYPE_SINGLE)
 	e3:SetCode(EFFECT_INDESTRUCTABLE_BATTLE)
-	e3:SetValue(aux.NOT(aux.TargetBoolFunction(Card.IsSetCard,0x48)))
+	e3:SetValue(aux.NOT(aux.TargetBoolFunction(Card.IsSetCard,SET_NUMBER)))
 	c:RegisterEffect(e3)
 end
 s.listed_series={0x48}
@@ -40,7 +40,7 @@ function s.descon(e)
 	return not Duel.IsEnvironment(CARD_NUMERON_NETWORK)
 end
 function s.bancon(e,tp,eg,ep,ev,re,r,rp)
-	return e:GetHandler():IsSummonType(SUMMON_TYPE_XYZ)
+	return e:GetHandler():IsXyzSummoned()
 end
 function s.bantg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return true end
@@ -93,12 +93,12 @@ function s.spop(e,tp,eg,ep,ev,re,r,rp)
 		e1:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
 		e1:SetCode(EVENT_SPSUMMON_SUCCESS)
 		e1:SetCondition(s.damcon)
-		e1:SetCost(aux.dxmcostgen(1,1,nil))
+		e1:SetCost(Cost.DetachFromSelf(1))
 		e1:SetTarget(s.damtg)
 		e1:SetOperation(s.damop)
 		e1:SetLabel(e:GetLabel())
 		e1:SetReset(RESET_EVENT+RESETS_STANDARD-RESET_TOFIELD)
-		c:RegisterEffect(e1,false,REGISTER_FLAG_DETACH_XMAT)
+		c:RegisterEffect(e1)
 		Duel.SpecialSummon(c,1,tp,tp,false,false,POS_FACEUP)
 	end
 end

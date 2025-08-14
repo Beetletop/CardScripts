@@ -1,5 +1,5 @@
 --液状巨人ダイダラタント
---Daidaratant the Liquid Giant
+--Daidaratant the Ooze Giant
 --Scripted by Hatter
 local s,id=GetID()
 function s.initial_effect(c)
@@ -24,7 +24,7 @@ function s.initial_effect(c)
 	e2:SetType(EFFECT_TYPE_IGNITION)
 	e2:SetRange(LOCATION_MZONE)
 	e2:SetCountLimit(1,{id,1})
-	e2:SetCost(aux.dxmcostgen(1,1))
+	e2:SetCost(Cost.DetachFromSelf(1,1))
 	e2:SetTarget(s.pltg)
 	e2:SetOperation(s.plop)
 	c:RegisterEffect(e2)

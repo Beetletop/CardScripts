@@ -1,11 +1,11 @@
 --百鬼羅刹 グリアーレ三傑
---Goblin Biker Grialle Trio
+--Goblin Biker Troika Griare
 --scripted by Naim
 local s,id=GetID()
 function s.initial_effect(c)
 	c:EnableReviveLimit()
 	--Xyz Summon Procedure
-	Xyz.AddProcedure(c,nil,3,2,nil,nil,99)
+	Xyz.AddProcedure(c,nil,3,2,nil,nil,Xyz.InfiniteMats)
 	--Your "Goblin" monsters can attack directly
 	local e1=Effect.CreateEffect(c)
 	e1:SetType(EFFECT_TYPE_FIELD)
@@ -23,7 +23,7 @@ function s.initial_effect(c)
 	e2:SetProperty(EFFECT_FLAG_DELAY+EFFECT_FLAG_CARD_TARGET,EFFECT_FLAG2_CHECK_SIMULTANEOUS)
 	e2:SetCode(EVENT_SUMMON_SUCCESS)
 	e2:SetRange(LOCATION_MZONE)
-	e2:SetCountLimit(1)
+	e2:SetCountLimit(1,0,EFFECT_COUNT_CODE_SINGLE)
 	e2:SetCondition(s.poscond)
 	e2:SetTarget(s.postg)
 	e2:SetOperation(s.posop)

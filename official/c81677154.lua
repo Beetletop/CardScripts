@@ -1,9 +1,9 @@
--- メメント・シーホース
--- Memento Tatsunootoshigo
--- Scripted by Satellaa
+--メメント・シーホース
+--Mementotlan Tatsunootoshigo
+--Scripted by Satellaa
 local s,id=GetID()
 function s.initial_effect(c)
-	-- Special Summon itself from the hand
+	--Special Summon itself from the hand
 	local e1=Effect.CreateEffect(c)
 	e1:SetDescription(aux.Stringid(id,0))
 	e1:SetCategory(CATEGORY_SPECIAL_SUMMON)
@@ -14,7 +14,7 @@ function s.initial_effect(c)
 	e1:SetTarget(s.sptg)
 	e1:SetOperation(s.spop)
 	c:RegisterEffect(e1)
-	-- Send cards from the Deck to the GY with a total Levels equal to or lower than the destroyed monster's original Level
+	--Send cards from the Deck to the GY with a total Levels equal to or lower than the destroyed monster's original Level
 	local e2=Effect.CreateEffect(c)
 	e2:SetDescription(aux.Stringid(id,1))
 	e2:SetCategory(CATEGORY_DESTROY+CATEGORY_TOGRAVE)
@@ -57,7 +57,7 @@ function s.tgtg(e,tp,eg,ep,ev,re,r,rp,chk)
 end
 function s.rescon(lv)
 	return function(sg,e,tp,mg)
-		return sg:GetSum(Card.GetLevel)<=lv and sg:GetClassCount(Card.GetCode)==#sg
+		return sg:GetSum(Card.GetLevel)<=lv and sg:GetClassCount(Card.GetCode)==#sg,sg:GetClassCount(Card.GetCode)~=#sg
 	end
 end
 function s.tgop(e,tp,eg,ep,ev,re,r,rp)
@@ -66,7 +66,7 @@ function s.tgop(e,tp,eg,ep,ev,re,r,rp)
 	if tc and Duel.Destroy(tc,REASON_EFFECT)>0 then
 		local lv=tc:GetOriginalLevel()
 		local g=Duel.GetMatchingGroup(s.tgfilter,tp,LOCATION_DECK,0,nil,lv)
-		local sg=aux.SelectUnselectGroup(g,e,tp,1,lv,s.rescon(lv),1,tp,HINTMSG_TOGRAVE)
+		local sg=aux.SelectUnselectGroup(g,e,tp,1,lv,s.rescon(lv),1,tp,HINTMSG_TOGRAVE,s.rescon(lv))
 		if #sg>0 then
 			Duel.SendtoGrave(sg,REASON_EFFECT)
 		end

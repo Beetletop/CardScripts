@@ -1,90 +1,164 @@
 --Utilities to be added to the core
 
 --[[
-	A monster that is temporarily banished shouldn't be treated as a monster that was Normal, Flip, or Special Summoned that turn, or as a monster that has already changed its battle position, after it returns to the field.
-	Manually sets the relevant statuses to "false" before returning the monster to the field.
+	Automatically shuffle a player's hand when the effect of a card that they activated in the hand begins resolving, but only if that same card is still in the hand on resolution
+	Fixes cases such as the "Enneacraft" monsters where the opponent shouldn't know if the player Special Summoned the monster whose effect was activated or not
 --]]
-Duel.ReturnToField=(function()
-	local oldfunc=Duel.ReturnToField
-	return function(card,pos,zone,...)
-		if not card:IsReason(REASON_TEMPORARY) then return false end
-		card:SetStatus(STATUS_FORM_CHANGED,false)
-		card:SetStatus(STATUS_SUMMON_TURN,false)
-		card:SetStatus(STATUS_FLIP_SUMMON_TURN,false)
-		card:SetStatus(STATUS_SPSUMMON_TURN,false)
-		pos=pos or card:GetPreviousPosition()
-		zone=zone or 0xff
-		return oldfunc(card,pos,zone,...)
+do
+	local function check_opinfo(ev,category,rc)
+		local ex,tg=Duel.GetOperationInfo(ev,category)
+		local possible_ex,possible_tg=Duel.GetPossibleOperationInfo(ev,category)
+		return (ex and tg and tg:IsContains(rc)) or (possible_ex and possible_tg and possible_tg:IsContains(rc))
+	end
+
+	--to keep track of a player whose hand has already been shuffled earlier during the current Chain
+	local player_table={}
+	player_table[0]=false
+	player_table[1]=false
+
+	--shuffle the player's hand at the beginning of an effect's resolution if all the checks are passed
+	local shuffle_eff=Effect.GlobalEffect()
+	shuffle_eff:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
+	shuffle_eff:SetCode(EVENT_CHAIN_SOLVING)
+	shuffle_eff:SetOperation(function(e,tp,eg,ep,ev,re,r,rp)
+					local rc=re:GetHandler()
+					local player=rc:GetControler()
+					--if this player's hand was already shuffled earlier in this Chain then don't shuffle it again
+					if player_table[player] then return end
+					if Duel.GetChainInfo(ev,CHAININFO_TRIGGERING_LOCATION)~=LOCATION_HAND then return end
+					--if it's not the same card in the hand anymore then don't shuffle
+					if not (rc:IsRelateToEffect(re) and rc:IsLocation(LOCATION_HAND)) then return end
+					--if there's opinfo that would (even potentially) move rc then don't shuffle, e.g. the "Subterror Behemoth" monsters
+					if check_opinfo(ev,CATEGORY_SPECIAL_SUMMON,rc) then return end
+					if check_opinfo(ev,CATEGORY_SUMMON,rc) then return end
+					if check_opinfo(ev,CATEGORY_TOGRAVE,rc) then return end
+					if check_opinfo(ev,CATEGORY_DESTROY,rc) then return end
+					if check_opinfo(ev,CATEGORY_REMOVE,rc) then return end
+					if check_opinfo(ev,CATEGORY_TODECK,rc) then return end
+					if check_opinfo(ev,CATEGORY_TOEXTRA,rc) then return end
+					if check_opinfo(ev,CATEGORY_EQUIP,rc) then return end
+					if check_opinfo(ev,CATEGORY_RELEASE,rc) then return end
+					--otherwise, shuffle
+					Duel.ShuffleHand(player)
+					player_table[player]=true
+				end)
+	Duel.RegisterEffect(shuffle_eff,0)
+
+	--reset the player tracking at the end of each Chain
+	local tracking_eff=Effect.GlobalEffect()
+	tracking_eff:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
+	tracking_eff:SetCode(EVENT_CHAIN_END)
+	tracking_eff:SetOperation(function()
+					player_table[0]=false
+					player_table[1]=false
+				end)
+	Duel.RegisterEffect(tracking_eff,0)
+end
+
+--[[
+	Have all the effects that grant an additional Tribute Summon share "Card Advance" as the flag effect's ID
+	If "Duel.RegisterEffect" detects such an effect is being registered then it'll automatically register said flag effect as well
+--]]
+function Duel.IsPlayerCanAdditionalTributeSummon(player)
+	return not Duel.HasFlagEffect(player,CARD_CARD_ADVANCE)
+end
+Duel.RegisterEffect=(function()
+	local oldfunc=Duel.RegisterEffect
+	return function(effect,player,...)
+		if effect:GetCode()==EFFECT_EXTRA_SUMMON_COUNT and effect:GetValue()==0x1 then
+			local reset,reset_count=effect:GetReset()
+			Duel.RegisterFlagEffect(player,CARD_CARD_ADVANCE,reset,0,reset_count)
+		end
+		oldfunc(effect,player,...)
 	end
 end)()
 
 --[[
-	Places a hint that says "Added to the hand by a currently resolving effect" (string 225) on any cards added to the hand for the duration of that Chain's/effect's resolution.
-	Used to differentiate which card(s) were just added to the hand and which ones were already there for cases of multiple copies of the same card being present.
-	The card ID used for the flag effect (30336082) belongs to "Brimming Sangen Manor", the card that initially needed this workaround.
+	Registers a flag effect on each monster that is Normal or Special Summoned, with the current phase being the flag effect's label
+	The flag will reset if the monster stops being face-up in the Monster Zone
+	Intended to be used with Rush cards like "Wicked Dragon of Darkness" [160214042] that require having been Normal/Special Summoned during a specific phase
+	If the monster is Summoned again (e.g. a Gemini Monster) the previous value will be overwritten (could be improved by adding such handling but it's not needed for Rush anyways)
+	
+	Also added basic "get" and "is" functions:
+		- Card.GetSummonPhase: Returns the flag effect's label, or 0 if the flag effect doesn't exist
+		- Card.IsSummonPhase: Returns 'true' or 'false' depending on the passed phase, use 'PHASE_MAIN' to check for the Main Phase and 'PHASE_BATTLE' to check for the Battle Phase (any other phase has no special handling and is checked as is)
 --]]
-Duel.SendtoHand=(function()
-	local oldfunc=Duel.SendtoHand
-	return function(card_or_group,dest_player,reason,reason_player,...)
-		local res=oldfunc(card_or_group,dest_player,reason,reason_player,...)
-		if res==0 then return res end
-		if type(card_or_group)=="Group" then
-			local hand_group=card_or_group:Filter(Card.IsLocation,nil,LOCATION_HAND)
-			for tc in hand_group:Iter() do
-				tc:RegisterFlagEffect(30336082,RESET_EVENT|RESETS_STANDARD|RESET_CHAIN,EFFECT_FLAG_CLIENT_HINT,1,0,225)
-			end
-		elseif type(card_or_group)=="Card" and card_or_group:IsLocation(LOCATION_HAND) then
-			card_or_group:RegisterFlagEffect(30336082,RESET_EVENT|RESETS_STANDARD|RESET_CHAIN,EFFECT_FLAG_CLIENT_HINT,1,0,225)
+do
+	--Store each monster's summon phase
+	local ns_eff=Effect.GlobalEffect()
+	ns_eff:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
+	ns_eff:SetCode(EVENT_SUMMON_SUCCESS)
+	ns_eff:SetOperation(function(e,tp,eg,ep,ev,re,r,rp)
+				for sc in eg:Iter() do
+					--"Wicked Dragon of Darkness"
+					sc:RegisterFlagEffect(160214042,RESET_EVENT|RESETS_STANDARD,0,1,Duel.GetCurrentPhase())
+				end
+			end)
+	Duel.RegisterEffect(ns_eff,0)
+	local sp_eff=ns_eff:Clone()
+	sp_eff:SetCode(EVENT_SPSUMMON_SUCCESS)
+	Duel.RegisterEffect(sp_eff,0)
+end
+function Card.GetSummonPhase(c)
+	--same ID as above
+	return c:HasFlagEffect(160214042) and c:GetFlagEffectLabel(160214042) or 0
+end
+function Card.IsSummonPhase(c,phase)
+	if phase==PHASE_MAIN then
+		return c:GetSummonPhase()==PHASE_MAIN1 or c:GetSummonPhase()==PHASE_MAIN2
+	elseif phase==PHASE_BATTLE then
+		return c:GetSummonPhase()>=PHASE_BATTLE_START and c:GetSummonPhase()<=PHASE_BATTLE
+	else
+		return c:GetSummonPhase()==phase
+	end
+end
+
+--[[
+	Raise "EVENT_MOVE" when a card(s) is attached as Xyz Material
+	Fixes "Guiding Quem, the Virtuous" [45883110] and "Despian Luluwalilith" [53971455] not triggering if a card is attached directly from the Extra Deck
+--]]
+Duel.Overlay=(function()
+	local oldfunc=Duel.Overlay
+	return function(xyz_monster,xyz_mats,send_to_grave)
+		local eg=xyz_mats
+		local re=nil
+		local r=REASON_RULE
+		local rp=PLAYER_NONE
+		local core_reason_effect=Duel.GetReasonEffect()
+		if Duel.IsChainSolving() or (core_reason_effect and not core_reason_effect:IsHasProperty(EFFECT_FLAG_CANNOT_DISABLE)) then
+			re=Duel.GetReasonEffect()
+			r=REASON_EFFECT
+			rp=Duel.GetReasonPlayer()
 		end
+		if not send_to_grave then
+			if type(xyz_mats)=="Card" then
+				eg=eg+xyz_mats:GetOverlayGroup()
+			elseif type(xyz_mats)=="Group" then
+				for c in xyz_mats:Iter() do
+					eg=eg+c:GetOverlayGroup()
+				end
+			end
+		end
+		local res=oldfunc(xyz_monster,xyz_mats,send_to_grave)
+		Duel.RaiseEvent(eg,EVENT_MOVE,re,r,rp,0,0)
 		return res
 	end
 end)()
 
---Use the "selected" string by default. Pass "false" as the boolean to use the "targeted" string instead.
-Duel.HintSelection=(function()
-	local oldfunc=Duel.HintSelection
-	return function(card_or_group,log_as_selection,...)
-		if log_as_selection==nil then log_as_selection=true end
-		return oldfunc(card_or_group,log_as_selection,...)
-	end
-end)()
-
 --[[
-	If called while an effect isn't resolving (e.g. a regular Xyz Summon or through an effect like "Wonder Xyz") then proceed as usual with the attaching.
-	If called while an effect is resolving treat it as attaching by card effect and handle the relevant rulings.
-	Attaching by card effect is ruled to affect both the Xyz Monster and the cards that are to be attached.
-	Return early if the Xyz Monster is unaffected by the currently resolving effect.
-	Remove any cards that are unaffected by the currently resolving effect from the group of cards to be attached.
-	If all the cards to be attached are unaffected by the currently resolving effect then return early.
-	Proceed as usual with the attaching otherwise.
-Duel.Overlay=(function()
-	local oldfunc=Duel.Overlay
-	return function(xyz_monster,xyz_mats,send_to_grave)
-		if not Duel.IsChainSolving() then return oldfunc(xyz_monster,xyz_mats,send_to_grave) end
-		local trig_eff=Duel.GetChainInfo(0,CHAININFO_TRIGGERING_EFFECT)
-		if xyz_monster:IsImmuneToEffect(trig_eff) then return end
-		if type(xyz_mats)=="Group" then
-			xyz_mats:Match(aux.NOT(Card.IsImmuneToEffect),nil,trig_eff)
-			if #xyz_mats==0 then return end
-		elseif type(xyz_mats)=="Card" and xyz_mats:IsImmuneToEffect(trig_eff) then
-			return
+	Return false by default if the card to attach and the Xyz Monster to attach the card to are the same card
+--]]
+Card.IsCanBeXyzMaterial=(function()
+	local oldfunc=Card.IsCanBeXyzMaterial
+	return function(card,xyz_monster,player,reason)
+		if xyz_monster and card==xyz_monster then
+			return false
 		end
-		return oldfunc(xyz_monster,xyz_mats,send_to_grave)
+		player=player or Duel.GetReasonPlayer()
+		reason=reason or REASON_XYZ|REASON_MATERIAL
+		return oldfunc(card,xyz_monster,player,reason)
 	end
 end)()
---]]
-
---Remove counter from only 1 card if it is the only card with counter
-local p_rem=Duel.RemoveCounter
-function Duel.RemoveCounter(tp,s,o,counter,...)
-	local ex_params={...}
-	local s,o=s>0 and LOCATION_ONFIELD or 0,o>0 and LOCATION_ONFIELD or 0
-	local cg=Duel.GetFieldGroup(tp,s,o):Match(function(c) return c:GetCounter(counter)>0 end,nil)
-	if #cg==1 then
-		return cg:GetFirst():RemoveCounter(tp,counter,table.unpack(ex_params))
-	end
-	return p_rem(tp,s,o,counter,table.unpack(ex_params))
-end
 
 function Auxiliary.ReleaseNonSumCheck(c,tp,e)
 	if c:IsControler(tp) then return false end
@@ -171,8 +245,7 @@ function Auxiliary.ReleaseCheckSingleUse(sg,tp,exg)
 	return ct<=1,ct>1
 end
 function Auxiliary.ReleaseCheckMMZ(sg,tp)
-	return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
-		or sg:IsExists(aux.FilterBoolFunction(Card.IsInMainMZone,tp),1,nil)
+	return Duel.GetMZoneCount(tp,sg)>0
 end
 function Auxiliary.ReleaseCheckTarget(sg,tp,exg,dg)
 	return dg:IsExists(aux.TRUE,1,sg)

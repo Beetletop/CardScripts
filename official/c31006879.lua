@@ -1,5 +1,5 @@
 --ライディング・デュエル！アクセラレーション！
---Ready! Set! Duel!
+--On Your Mark, Get Set, DUEL!
 local s,id=GetID()
 function s.initial_effect(c)
 	--Search 1 "Synchron" monster
@@ -16,7 +16,7 @@ function s.initial_effect(c)
 	e2:SetDescription(aux.Stringid(id,1))
 	e2:SetCategory(CATEGORY_COUNTER)
 	e2:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_TRIGGER_F)
-	e2:SetCode(EVENT_PHASE+PHASE_STANDBY)
+	e2:SetCode(EVENT_PHASE|PHASE_STANDBY)
 	e2:SetRange(LOCATION_SZONE)
 	e2:SetCountLimit(1)
 	e2:SetCondition(function(_,tp) return Duel.IsTurnPlayer(tp) end)

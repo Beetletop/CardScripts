@@ -1,5 +1,5 @@
 --ＶＳ龍帝ヴァリウス
---Vanquish Soul Kaiser Varius
+--Vanquish Soul Caesar Valius
 --Scripted by Hatter
 local s,id=GetID()
 function s.initial_effect(c)
@@ -104,7 +104,7 @@ function s.vsop(e,tp,eg,ep,ev,re,r,rp)
 		e1:SetCode(EFFECT_IMMUNE_EFFECT)
 		e1:SetRange(LOCATION_MZONE)
 		e1:SetValue(function(e,te) return te:IsActivated() and te:GetOwnerPlayer()~=e:GetHandlerPlayer() end)
-		e1:SetReset(RESET_EVENT|RESETS_STANDARD|RESET_PHASE|PHASE_END)
+		e1:SetReset(RESETS_STANDARD_PHASE_END)
 		c:RegisterEffect(e1)
 	elseif op==2 then
 		Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_DESTROY)

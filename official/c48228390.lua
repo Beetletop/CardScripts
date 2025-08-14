@@ -1,4 +1,4 @@
---JP name
+--黄鉄の愚騎士
 --Pyrite Knight
 --Scripted by Hatter
 local s,id=GetID()
@@ -22,7 +22,7 @@ function s.initial_effect(c)
 	e2:SetCode(EVENT_FREE_CHAIN)
 	e2:SetRange(LOCATION_MZONE)
 	e2:SetCountLimit(1,{id,1})
-	e2:SetHintTiming(0,TIMING_BATTLE_START+TIMING_BATTLE_END)
+	e2:SetHintTiming(0,TIMING_BATTLE_START|TIMING_BATTLE_END)
 	e2:SetCondition(function() return Duel.IsBattlePhase() end)
 	e2:SetTarget(s.sptg)
 	e2:SetOperation(s.spop)

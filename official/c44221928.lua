@@ -1,3 +1,4 @@
+--褒誉の息吹
 --Breath of Acclamation
 local s,id=GetID()
 function s.initial_effect(c)

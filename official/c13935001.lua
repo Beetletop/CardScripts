@@ -28,7 +28,7 @@ function s.initial_effect(c)
 	e3:SetCode(EVENT_FREE_CHAIN)
 	e3:SetRange(LOCATION_GRAVE)
 	e3:SetCountLimit(1,id)
-	e3:SetCost(aux.bfgcost)
+	e3:SetCost(Cost.SelfBanish)
 	e3:SetCondition(s.spcon)
 	e3:SetTarget(s.sptg)
 	e3:SetOperation(s.spop)
@@ -38,7 +38,7 @@ s.listed_names={13935002} --Lunalight Token
 s.listed_series={SET_LUNALIGHT}
 	--If fusion monster(s) were fusion summoned to your field
 function s.cfilter(c,e,tp)
-	return c:IsFaceup() and c:IsType(TYPE_FUSION) and c:IsControler(tp) and c:IsSummonType(SUMMON_TYPE_FUSION)
+	return c:IsFaceup() and c:IsType(TYPE_FUSION) and c:IsControler(tp) and c:IsFusionSummoned()
 		and c:IsCanBeEffectTarget(e)
 end
 	--If it ever happened

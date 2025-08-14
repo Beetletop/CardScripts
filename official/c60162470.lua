@@ -60,7 +60,7 @@ function s.atkval(e,c)
 	return val
 end
 function s.atkfilter(c,tc)
-	return c:IsLinkMonster() and c:IsSummonType(SUMMON_TYPE_LINK) and c:HasFlagEffect(id)
+	return c:IsLinkMonster() and c:IsLinkSummoned() and c:HasFlagEffect(id)
 end
 function s.atkcon(e,tp,eg,ep,ev,re,r,rp)
 	return eg:IsExists(s.atkfilter,1,nil)
@@ -72,7 +72,7 @@ function s.atkop(e,tp,eg,ep,ev,re,r,rp)
 		e1:SetType(EFFECT_TYPE_SINGLE)
 		e1:SetCode(EFFECT_UPDATE_ATTACK)
 		e1:SetValue(e:GetLabelObject():GetLabel())
-		e1:SetReset(RESET_EVENT|RESETS_STANDARD|RESET_PHASE|PHASE_END)
+		e1:SetReset(RESETS_STANDARD_PHASE_END)
 		tc:RegisterEffect(e1)
 	end
 end

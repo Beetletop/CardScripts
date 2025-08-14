@@ -1,5 +1,5 @@
 --蕾禍ノ鎖蛇巳
---Raika no Kusarigami
+--Ragnaraika Chain Coils
 --scripted by pyrQ
 local s,id=GetID()
 function s.initial_effect(c)

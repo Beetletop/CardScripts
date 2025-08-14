@@ -11,7 +11,7 @@ function s.initial_effect(c)
 	e1:SetType(EFFECT_TYPE_IGNITION)
 	e1:SetRange(LOCATION_MZONE)
 	e1:SetCountLimit(1,id)
-	e1:SetCost(aux.dxmcostgen(1,1,nil))
+	e1:SetCost(Cost.DetachFromSelf(1,1,nil))
 	e1:SetTarget(s.sptg)
 	e1:SetOperation(s.spop)
 	c:RegisterEffect(e1)
@@ -74,6 +74,6 @@ end
 function s.disop(e,tp,eg,ep,ev,re,r,rp,chk)
 	local tc=Duel.GetFirstTarget()
 	if tc:IsFaceup() and tc:IsRelateToEffect(e) and not tc:IsDisabled() then
-		tc:NegateEffects(e:GetHandler(),RESET_EVENT|RESETS_STANDARD|RESET_PHASE|PHASE_END)
+		tc:NegateEffects(e:GetHandler(),RESETS_STANDARD_PHASE_END)
 	end
 end

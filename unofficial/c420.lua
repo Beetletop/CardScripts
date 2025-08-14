@@ -144,9 +144,14 @@ if not AnimeArchetype then
 	-- Champion's Vigilance, Absolute King - Megaplunder
 	Card.IsChampion=MakeCheck({0x152f},{82382815,27553701})
 
-	-- Clear クリアー
-	-- Clear Vice Dragon/Clear World
-	Card.IsClear=MakeCheck({0x510},{97811903,82044279,33900648})
+	-- Clear クリアー (checked 07/29/2024)
+	-- Clear Vice Dragon/Clear World/Clear Wall
+	-- Clear Cube/Clear Phantom/Clear Rage Golem/Clear Vicious Knight
+	AnimeArchetype.OCGClear={
+		97811903,82044279,33900648,6089145,33506331,
+		70717628,7102732,70095046
+	}
+	Card.IsClear=MakeCheck({0x510},AnimeArchetype.OCGClear)
 
 	-- Comics Hero (Checked 13/05/2024)
 	-- ＣＨ
@@ -275,11 +280,11 @@ if not AnimeArchetype then
 	}
 	Card.IsElf=MakeCheck({0x51b,0xe4},AnimeArchetype.OCGElf)
 
-	-- Emissary of Darkness  (Checked 13/05/2024)
+	-- Emissary of Darkness  (Checked 26/04/2025)
 	-- 冥府の使者
 	-- めいふのししゃ
 	-- Gorz the Emissary of Darkness/Emissary of Darkness Token
-	Card.IsEmissaryOfDarkness=MakeCheck({0x51c,0xe4},{44330098,44330099})
+	Card.IsEmissaryOfDarkness=MakeCheck({0x51c},{44330098,44330099})
 
 	-- Fairy (archetype) フェアリー
 	-- Ancient Fairy Dragon/CXyz Dark Fairy Cheer Girl/Nekogal #1
@@ -482,6 +487,7 @@ if not AnimeArchetype then
 	-- King of the Swamp/Beastking of the Swamps/Imperial Tombs of Necrovalley
 	-- Coach King Giantrainer/Coach Captain Bearman
 	-- Morph King Stygi-Gel/Number 3: Cicada King
+	-- Red Lotus King, Flame Crime
 
 	-- archtype:Fire King/Supreme King/Monarch (spell/trap)/Dracoverlord
 	AnimeArchetype.OCGKing={
@@ -494,8 +500,7 @@ if not AnimeArchetype then
 		35058857,CARD_NECROVALLEY,47387961,6901008,18891691,63571750,89959682,43791861,51371017,82213171,10071456,29155212,
 		4179849,71411377,5901497,58477767,19254117,33950246,51452091,16509093,93016201,26586849,56058888,72405967,
 		86742443,86327225,61370518,88307361,29762407,80955168,72709014,24857466,52589809,5309481,10613952,84025439,
-		38180759,22858242,
-		85457355,100266028
+		38180759,22858242,85457355,4997565,19299793
 	}
 	Card.IsKing=MakeCheck({0x52f,0xf8,0x81,0xda},AnimeArchetype.OCGKing,{"IsChampion"})
 
@@ -767,10 +772,9 @@ if not AnimeArchetype then
 	-- Elemental HERO The Shining/Elemental HERO Shining Phoenix Enforcer/Elemental HERO Shining Flare Wingman
 	-- Leeching the Light/SZW - Fenrir Sword/Shining Hope Road
 	-- Radiant Mirror Force/Number 104: Masquerade/Blue-Eyes Shining Dragon
-
-	-- Number S
 	AnimeArchetype.OCGShining={
 		22061412,88820235,25366484,62829077,53347303,90263923,12927849,21481146,2061963
+		-- Number S
 	}
 	Card.IsShining=MakeCheck({0x548,0x2048},AnimeArchetype.OCGShining)
 
@@ -807,20 +811,21 @@ if not AnimeArchetype then
 		77235086,3629090,49010598,54407825,95457011,96570609,92223641,4149689,1637760,39238953,38411870,7452945,
 		97795930,10028593,86327225,27813661,11458071,48453776,74841885,10000020,41589166,90122655,95352218,23587624,
 		29146185,37910722,32995007,75326861,58601383,1992816,80764541,23085002,32559361,2519690,12171659,80196387,
-		33837653,60822251,
-		64806765,33907039
+		33837653,60822251,64806765,33907039
 	}
 	Card.IsSky=MakeCheck({0x54a,0xf6,0x3042},AnimeArchetype.OCGSky,{"IsCelestial","IsAngel"})
 
 	-- Slime スライム
 	-- Slime Toad/Graydle Slime/Graydle Slime Jr.
-	-- Jam Breeding Machine/Slime token/Change Slime
+	-- Jam Breeding Machine/Slime Token/Change Slime
 	-- Jam Defender/D/D Swirl Slime/D/D Necro Slime
 	-- Humanoid Slime/Magical Reflect Slime/Metal Reflect Slime
-	-- Revival Jam
+	-- Revival Jam/Egyptian God Slime/Reactor Slime
+	-- Impcantation Chalislime
 	AnimeArchetype.OCGSlime={
-		31709826,46821314,3918345,26905245,5600127,45206713,
-		72291412,21770261
+		68638985,20056760,80250319,21770260,21770261,79387393,18914778,
+		21558682,45206713,72291412,46821314,3918345,26905245,31709826,
+		42166000,79387392,65877963
 	}
 	Card.IsSlime=MakeCheck({0x54b},AnimeArchetype.OCGSlime)
 
@@ -876,7 +881,7 @@ if not AnimeArchetype then
 
 	-- Tachyon タキオン
 	AnimeArchetype.OCGTachyon={
-		-- Tachyon Transmigrassion, Tachyon Chaos Hole
+		-- Tachyon Transmigration, Tachyon Chaos Hole
 		8038143,59650656
 	}
 	Card.IsTachyon=MakeCheck({0x555},AnimeArchetype.OCGTachyon,{"IsTachyonDragon"})
@@ -936,12 +941,13 @@ if not AnimeArchetype then
 	-- Naturia White Oak/White Night Dragon/Blue-Eyes Alternative White Dragon/
 	-- Blue-Eyes White Dragon/ The White Stone of Ancients/The White Stone of Legend/
 	-- White Aura Dolphin/White Aura Biphamet/White Aura Whale/
-	-- White Aura Monokeros/ White Salvation/White Magical Hat/
+	-- White Aura Monoceros/Whitefish Salvage/White Magical Hat/
 	-- White Stingray/White Duston/White Dolphin/
-	-- White Night Queen/White ninja/White Howling/
-	-- White Hole/White-Horned Dragon / White Potan
+	-- White Night Queen/White Ninja/White Howling/
+	-- White Hole/White-Horned Dragon /White Potan
 	-- White Moray/Lunalight White Rabbit
-	-- White Mirror
+	-- White Mirror/White Sunfish/White Sardine/
+	-- White Aura Porpoise/White Circle Reef/Arbitration of White
 	AnimeArchetype.OCGWhite={
 		13429800,46104361,9433350,
 		32269855,22804410,73398797,
@@ -953,7 +959,8 @@ if not AnimeArchetype then
 		20193924,1571945,62487836,
 		43487744,73891874,98024118,
 		84812868,32825095,84335863,
-		19885332
+		19885332,52596406,98684051,
+		46956301,21579049,57964143
 	}
 	Card.IsWhite=MakeCheck({0x55d},AnimeArchetype.OCGWhite)
 
@@ -1067,22 +1074,30 @@ if not AnimeArchetype then
 	Card.IsMosquito=MakeCheck({0x536},{94113093})
 
 -----------------------------------------
-	-- Speed Duel
+	-- Speed Duel exclusive archetypes
 
-	-- Gaia the Dragon Champion
+	-- Gaia the Dragon Champion (Archetype)
 	-- Gaia the Dragon Champion/Sky Galloping Gaia the Dragon Champion
 	Card.IsGaiatheDragonChampion=MakeCheck({0x580},{66889139,2519690})
 
-	-- Ancient Gear Golem
+	-- Ancient Gear Golem (Archetype)
 	-- Ancient Gear Golem/Ancient Gear Golem - Ultimate Pound
 	-- Toon Ancient Gear Golem/Ultimate Ancient Gear Golem
 	Card.IsAncientGearGolem=MakeCheck({0x581},{83104731,95735217,7171149,12652643})
 
-	-- Insect Queen
+	-- Insect Queen (Archetype)
 	-- Insect Queen/Metamorphosed Insect Queen
 	Card.IsInsectQueen=MakeCheck({0x582},{91512835,41456841})
 
-	-- Fortress Whale
+	-- Fortress Whale (Archetype)
 	-- Fortress Whale/Fortress Whale's Oath/Mega Fortress Whale
 	Card.IsFortressWhale=MakeCheck({0x583},{62337487,77454922,96546575})
+
+	-- The Winged Dragon of Ra (Archetype)
+	-- The Winged Dragon of Ra/The Winged Dragon of Ra - Sphere Mode/The Winged Dragon of Ra - Immortal Phoenix
+	Card.IsTheWingedDragonofRa=MakeCheck({0x584},{10000010,10000080,10000090})
+	
+	--Harpie Lady Sisters (Archetype)
+	--Harpie Lady Sisters
+	Card.IsHarpieLadySisters=MakeCheck({0x1064},{12206212})
 end

@@ -13,16 +13,16 @@ function s.initial_effect(c)
 end
 function s.condition(e,tp,eg,ep,ev,re,r,rp)
 	local ph=Duel.GetCurrentPhase()
-	return Duel.GetTurnPlayer()==tp and (ph==PHASE_MAIN1 or ph==PHASE_MAIN2)
+	return Duel.IsTurnPlayer(tp) and (ph==PHASE_MAIN1 or ph==PHASE_MAIN2)
 end
 function s.filter(c,e,tp)
 	local ct=c.minxyzct
-	return c:IsSetCard(0x48) and c:IsType(TYPE_XYZ)
+	return c:IsSetCard(SET_NUMBER) and c:IsType(TYPE_XYZ)
 		and c:IsCanBeSpecialSummoned(e,0,tp,false,false) and ct
 		and Duel.IsExistingMatchingCard(s.atfilter,tp,LOCATION_GRAVE,0,ct,c)
 end
 function s.atfilter(c)
-	return c:IsSetCard(0x48) and c:IsMonster()
+	return c:IsSetCard(SET_NUMBER) and c:IsMonster()
 end
 function s.target(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
@@ -38,7 +38,8 @@ function s.activate(e,tp,eg,ep,ev,re,r,rp)
 		Duel.SpecialSummon(tc,0,tp,tp,false,false,POS_FACEUP)
 		local ct=tc.minxyzct
 		local ct2=tc.maxxyzct
-		local og=Duel.SelectMatchingCard(tp,aux.NecroValleyFilter(s.atfilter),tp,LOCATION_GRAVE,0,ct,ct2,nil)
-		Duel.Overlay(tc,og)
+		local g=Duel.GetMatchingGroup(aux.NecroValleyFilter(s.atfilter),tp,LOCATION_GRAVE,0,nil)
+		if ct2==Xyz.InfiniteMats then ct2=#g end
+		Duel.Overlay(tc,g:Select(tp,ct,ct2,nil))
 	end
 end

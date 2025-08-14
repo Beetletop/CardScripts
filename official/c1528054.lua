@@ -1,5 +1,5 @@
 --影法師トップハットヘア
---Top Hat Hare the Silhouette Magician
+--Silhouhatte Rabbit
 --Scripted by Hatter
 local s,id=GetID()
 function s.initial_effect(c)
@@ -22,7 +22,7 @@ function s.initial_effect(c)
 	e2:SetProperty(EFFECT_FLAG_DELAY)
 	e2:SetCode(EVENT_SPSUMMON_SUCCESS)
 	e2:SetCountLimit(1,id)
-	e2:SetCondition(function(e) return e:GetHandler():IsSummonType(SUMMON_TYPE_LINK) end)
+	e2:SetCondition(function(e) return e:GetHandler():IsLinkSummoned() end)
 	e2:SetTarget(s.settg)
 	e2:SetOperation(s.setop)
 	c:RegisterEffect(e2)
